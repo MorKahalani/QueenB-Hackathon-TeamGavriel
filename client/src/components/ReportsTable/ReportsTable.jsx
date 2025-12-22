@@ -1,5 +1,6 @@
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Chip, Button } from '@mui/material';
 import styles from './ReportsTable.module.css';
+import PropTypes from 'prop-types'; 
 
 const ReportsTable = ({reports}) => {
   return (
@@ -53,5 +54,8 @@ const ReportsTable = ({reports}) => {
   );
 };
 
+ReportsTable.propTypes = {
+  reports:PropTypes.array.isRequired,
+};
 
 export default ReportsTable;

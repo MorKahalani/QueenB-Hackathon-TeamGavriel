@@ -1,7 +1,7 @@
 import styles from './AdminPage.module.css'; 
 import ReportsTable from '../../components/ReportsTable/ReportsTable';
 import StatCard from '../../components/StatCard/StatCard';
-import React, {useState} from 'react'; 
+import {useState} from 'react'; 
 
 const mockReports = [
   { id: 'ABC-123', status: 'קריטי', subject: 'חרם בוואטסאפ',location: 'כיתה ח2' , description: 'התלמידים פתחו קבוצה נגד יואב',date: '20.11.2025 11:35' },
