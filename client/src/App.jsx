@@ -2,8 +2,6 @@ import { BrowserRouter, Routes, Route, Link } from 'react-router'
 import Home from './pages/HomePage/HomePage';
 import styles from './styles/App.module.css';
 import AdminPage from './pages/AdminPage/AdminPage'; 
-
-import projectLogo from './assets/project-logo.png'
 import CreateReport from './pages/CreateReport';
 
 function App() {
