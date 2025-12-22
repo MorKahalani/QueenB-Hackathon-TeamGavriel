@@ -1,4 +1,4 @@
-import styles from './Home.module.css';
+import styles from '../../styles/App.module.css';
 import RandomDuck from '../../components/RandomDuck/RandomDuck.jsx';
 
 

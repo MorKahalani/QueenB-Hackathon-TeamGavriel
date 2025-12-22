@@ -1,7 +1,4 @@
 /* App.module.css */
-.app {
-  text-align: center;
-}
 
 .appHeader {
   background-color: #53474F;
@@ -47,3 +44,80 @@
   text-align: center;
 }
   
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    direction: rtl; 
+    font-family: sans-serif;
+}
+
+.headerSection {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.mainTitle {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.infoText {
+    color: #666;
+    font-size: 1.1rem;
+    line-height: 1.5;
+}
+
+.reportForm {
+    display: flex;
+    flex-direction: column;
+    gap: 25px; 
+    background-color: #f9f9f9;
+    padding: 30px;
+    border-radius: 8px;
+}
+
+.formSubtitle {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+}
+
+.fieldGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.fieldGroup label {
+    font-weight: bold;
+    color: #333;
+}
+
+.inputField, .textareaField {
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    width: 100%;
+    font-family: inherit;
+}
+
+.textareaField {
+    resize: vertical;
+}
+
+.submitBtn {
+    background-color: #4a4a4a;
+    color: white;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    align-self: center; 
+    transition: background-color 0.3s;
+}
+
