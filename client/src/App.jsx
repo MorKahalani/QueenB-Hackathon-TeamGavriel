@@ -20,6 +20,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/admin" element={<AdminPage/>} />
             <Route path="/report" element={<CreateReport />} />
+
           </Routes>
         </main>
         <footer className={styles.footer}>
