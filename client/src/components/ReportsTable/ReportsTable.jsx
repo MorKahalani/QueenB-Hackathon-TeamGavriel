@@ -1,13 +1,7 @@
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Chip, Button } from '@mui/material';
 import styles from './ReportsTable.module.css';
 
-const mockReports = [
-  { id: 'ABC-123', status: 'קריטי', subject: 'חרם בוואטסאפ', date: '20.11.2025 11:35' },
-  { id: 'DEF-456', status: 'בטיפול', subject: 'אלימות מילולית', date: '21.11.2025 09:00' },
-  { id: 'GHI-789', status: 'הסתיים', subject: 'שימוש בשפה לא נאותה', date: '18.11.2025 14:20' },
-];
-
-const ReportsTable = () => {
+const ReportsTable = ({reports}) => {
   return (
     <TableContainer component={Paper} className={styles.tableWrapper}>
       <Table dir="rtl">
@@ -16,12 +10,21 @@ const ReportsTable = () => {
             <TableCell align="right">סטטוס</TableCell>
             <TableCell align="right">קוד דיווח</TableCell>
             <TableCell align="right">נושא</TableCell>
+            <TableCell align="right">מיקום</TableCell>
+            <TableCell align="right">תיאור</TableCell>
             <TableCell align="right">התקבל ב:</TableCell>
             <TableCell align="right">פעולות</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {mockReports.map((report) => (
+          {reports.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={7} align="center" style={{padding:'20px'}}>
+                אין עדיין דיווחים במערכת
+              </TableCell>
+            </TableRow>
+          ) : (
+          reports.map((report) => (
             <TableRow key={report.id} hover>
               <TableCell align="right">
                 <Chip 
@@ -32,6 +35,9 @@ const ReportsTable = () => {
               </TableCell>
               <TableCell align="right" style={{ fontWeight: 'bold' }}>{report.id}</TableCell>
               <TableCell align="right">{report.subject}</TableCell>
+              <TableCell align="right">{report.location}</TableCell>
+              <TableCell align="right" style={{ maxWidth: '200px',whiteSpace: 'nowrap', overflow: 'hidden',
+                textOverflow: 'ellipsis' }}>{report.description}</TableCell>
               <TableCell align="right">{report.date}</TableCell>
               <TableCell align="right">
                 <Button variant="contained" size="small" className={styles.viewBtn}>
@@ -39,7 +45,8 @@ const ReportsTable = () => {
                 </Button>
               </TableCell>
             </TableRow>
-          ))}
+          ))
+          )}
         </TableBody>
       </Table>
     </TableContainer>
