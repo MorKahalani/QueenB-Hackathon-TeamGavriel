@@ -3,6 +3,8 @@ import Home from './pages/HomePage/HomePage';
 import styles from './styles/App.module.css';
 import AdminPage from './pages/AdminPage/AdminPage'; 
 
+import projectLogo from './assets/project-logo.png'
+import CreateReport from './pages/CreateReport';
 
 function App() {
   return (
@@ -17,6 +19,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/admin" element={<AdminPage/>} />
+            <Route path="/report" element={<CreateReport />} />
           </Routes>
         </main>
         <footer className={styles.footer}>
