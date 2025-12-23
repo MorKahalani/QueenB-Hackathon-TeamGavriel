@@ -1,9 +1,9 @@
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Chip, Button } from '@mui/material';
 import styles from './ReportsTable.module.css';
 import PropTypes from 'prop-types'; 
-import { FiTrash2 } from "react-icons/fi";
+import InventoryIcon from '@mui/icons-material/Inventory';
 
-const ReportsTable = ({ reports, onDelete }) => {
+const ReportsTable = ({ reports, onArchive }) => {
   return (
     <TableContainer component={Paper} className={styles.tableWrapper}>
       <Table dir="rtl">
@@ -41,24 +41,21 @@ const ReportsTable = ({ reports, onDelete }) => {
               <TableCell align="right" style={{ maxWidth: '200px',whiteSpace: 'nowrap', overflow: 'hidden',
                 textOverflow: 'ellipsis' }}>{report.description}</TableCell>
               <TableCell align="right">{report.date}</TableCell>
-
              <TableCell align="right">
-  <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-    <Button variant="contained" size="small" className={styles.viewBtn}>
-      צפייה
-    </Button>
-    <Button 
-      variant="outlined" 
-      color="error" 
-      onClick={() => onDelete(report.id)}
-      style={{ minWidth: 'auto', padding: '6px' }}
-    >
-      <FiTrash2 />
-    </Button>
-  </div>
-</TableCell>
-
-
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+                <Button variant="contained" size="small" className={styles.viewBtn}>
+                  צפייה
+                </Button>
+                <Button 
+                  variant="outlined" 
+                  color="secondary" 
+                  onClick={() => onArchive(report.id)}
+                  style={{ minWidth: 'auto', padding: '6px' }}
+                >
+                  <InventoryIcon/>
+                </Button>
+              </div>
+            </TableCell>
             </TableRow>
           ))
           )}
@@ -70,7 +67,7 @@ const ReportsTable = ({ reports, onDelete }) => {
 
 ReportsTable.propTypes = {
   reports:PropTypes.array.isRequired,
-  onDelete: PropTypes.func.isRequired,
+  onArchive: PropTypes.func.isRequired,
 };
 
 export default ReportsTable;
