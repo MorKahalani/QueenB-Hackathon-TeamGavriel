@@ -1,0 +1,21 @@
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* רווח בין הטקסט לאייקון */
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: sans-serif;
+  transition: background 0.3s;
+}
+
+.logout-btn:hover {
+  background-color: #cc0000;
+}
+
+.btn-icon {
+  font-size: 1.2rem;
+}
