@@ -1,4 +1,4 @@
-import { FiDownload } from "react-icons/fi"; // ייבוא האייקון
+import { FiDownload } from "react-icons/fi";
 import styles from './ExportButton.module.css';
 import PropTypes from 'prop-types'; 
 
@@ -23,7 +23,7 @@ const ExportButton = ({ data }) => {
     document.body.appendChild(link);
     link.click();
     
-    // 5. ניקוי
+  
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
   };

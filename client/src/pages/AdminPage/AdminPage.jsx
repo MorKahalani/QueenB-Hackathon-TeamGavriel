@@ -24,7 +24,7 @@ const AdminPage = () => {
             report.location.toLowerCase().includes(searchTerm)
         );
         setReports(filtered); 
-        setActiveFilter('all'); // איפוס הסינון כשמחפשים ידנית
+        setActiveFilter('all'); 
     };
 
     const filterReports = (status) => {
@@ -60,7 +60,6 @@ const AdminPage = () => {
                     onChange={handleSearch}
                 />
                 
-                {/* כאן הכנסנו את הכפתורים הדינמיים בתוך ה-return */}
                 <div className={styles.filterButtons}>
                     <button 
                         className={`${styles.blackBtn} ${activeFilter === 'all' ? styles.active : ''}`}
