@@ -70,6 +70,7 @@ const ReportsTable = ({ reports, onDelete }) => {
 
 ReportsTable.propTypes = {
   reports:PropTypes.array.isRequired,
+  onDelete: PropTypes.func.isRequired,
 };
 
 export default ReportsTable;

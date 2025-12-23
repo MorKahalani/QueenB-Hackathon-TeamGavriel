@@ -1,4 +1,3 @@
-import React from 'react';
 import { FiLogOut } from "react-icons/fi"; 
 import './LogoutButton.css'; 
 
