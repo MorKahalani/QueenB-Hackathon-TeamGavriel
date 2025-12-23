@@ -1,6 +1,6 @@
-import React from 'react';
 import { FiDownload } from "react-icons/fi"; // ייבוא האייקון
 import styles from './ExportButton.module.css';
+import PropTypes from 'prop-types'; 
 
 const ExportButton = ({ data }) => {
   const handleExport = () => {
@@ -37,6 +37,10 @@ const ExportButton = ({ data }) => {
       <FiDownload />
     </button>
   );
+};
+
+ExportButton.propTypes = {
+  data: PropTypes.array.isRequired,
 };
 
 export default ExportButton;
