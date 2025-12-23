@@ -10,7 +10,7 @@ function App() {
       <div className={styles.app}>
         <header className={styles.appHeader}>
           <nav className={styles.appNav}>
-            <Link to="/" className={styles.appLink}>Home</Link>
+            {/*<Link to="/" className={styles.appLink}>Home</Link>*/}
           </nav>
         </header>
         <main className={styles.main}>
