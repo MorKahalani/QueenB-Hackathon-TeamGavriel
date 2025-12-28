@@ -1,9 +1,11 @@
 import styles from '../styles/App.module.css';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ShieldAlert, Users, Zap, MessageCircle, Lock, ImagePlay, Paperclip } from 'lucide-react';
 
 function CreateReport() {
     const [selectedSubject, setSelectedSubject] = useState('');
+    const navigate = useNavigate();
 
     const subjects = [
         { id: 'self-harm', label: 'פגיעה עצמית', icon: <ShieldAlert size={24} />, colorClass: styles.redCard },
@@ -105,7 +107,10 @@ function CreateReport() {
                     </div>
                 </div>
 
-                <button type="submit" className={styles.submitBtn}>שלח דיווח אנונימי</button>
+                <button 
+                type="submit" 
+                className={styles.submitBtn}
+                onClick={() => navigate('/confirmation')}>שלח דיווח אנונימי</button>
             </form>
         </div>
         
