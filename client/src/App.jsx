@@ -3,6 +3,7 @@ import Home from './pages/HomePage/HomePage';
 import styles from './styles/App.module.css';
 import AdminPage from './pages/AdminPage/AdminPage'; 
 import CreateReport from './pages/CreateReport';
+import StudentConfirmationPage from './pages/StudentConfirmationPage/StudentConfirmationPage';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/admin" element={<AdminPage/>} />
             <Route path="/report" element={<CreateReport />} />
+            <Route path="/confirmation" element={<StudentConfirmationPage/>} />
 
           </Routes>
         </main>
