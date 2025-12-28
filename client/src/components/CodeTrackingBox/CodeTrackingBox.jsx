@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Box, Paper, Typography, IconButton, Tooltip } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import CheckIcon from '@mui/icons-material/Check';
+import PropTypes from 'prop-types';
 
 const CodeTrackingBox = ({ code, title, explanation }) => {
     const [copied, setCopied] = useState(false);
@@ -41,6 +42,11 @@ const CodeTrackingBox = ({ code, title, explanation }) => {
             )}
         </Box>
     );
+};
+CodeTrackingBox.propTypes = {
+    code: PropTypes.string.isRequired,
+    explanation: PropTypes.string,
+    title: PropTypes.string
 };
 
 export default CodeTrackingBox;
