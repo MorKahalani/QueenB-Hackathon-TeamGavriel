@@ -3,7 +3,7 @@ import styles from './ReportsTable.module.css';
 import PropTypes from 'prop-types'; 
 import InventoryIcon from '@mui/icons-material/Inventory';
 
-const ReportsTable = ({ reports, onArchive }) => {
+const ReportsTable = ({ reports, onArchive,onView }) => {
   return (
     <TableContainer component={Paper} className={styles.tableWrapper}>
       <Table dir="rtl">
@@ -38,12 +38,12 @@ const ReportsTable = ({ reports, onArchive }) => {
               <TableCell align="right" style={{ fontWeight: 'bold' }}>{report.id}</TableCell>
               <TableCell align="right">{report.subject}</TableCell>
               <TableCell align="right">{report.location}</TableCell>
-              <TableCell align="right" style={{ maxWidth: '200px',whiteSpace: 'nowrap', overflow: 'hidden',
-                textOverflow: 'ellipsis' }}>{report.description}</TableCell>
+              <TableCell align="right" style={{ maxWidth: '200px' }}>
+                  {report.description.length > 15 ? `${report.description.substring(0, 15)}...` : report.description}</TableCell>
               <TableCell align="right">{report.date}</TableCell>
-             <TableCell align="right">
-            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-                <Button variant="contained" size="small" className={styles.viewBtn}>
+              <TableCell align="right">
+              <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+                <Button variant="contained" size="small" className={styles.viewBtn} onClick={() => onView(report)}>
                   צפייה
                 </Button>
                 <Button 
@@ -68,6 +68,7 @@ const ReportsTable = ({ reports, onArchive }) => {
 ReportsTable.propTypes = {
   reports:PropTypes.array.isRequired,
   onArchive: PropTypes.func.isRequired,
+  onView: PropTypes.func.isRequired,
 };
 
 export default ReportsTable;
