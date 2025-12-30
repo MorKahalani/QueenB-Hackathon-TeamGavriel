@@ -4,6 +4,8 @@ import { fileURLToPath } from 'url';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import rubberDuckRoutes from './routes/rubberDucks.js'; // Import the routes
+import mongoose from 'mongoose';
+import reportRoutes from './routes/reportRoutes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -24,6 +26,15 @@ app.use('/ducks', rubberDuckRoutes);
 
 // Start server
 const PORT = process.env.PORT;
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => {
+    console.log('✅ Connected to MongoDB: besafe-db');
+    return null; 
+  })
+  .catch((err) => {
+    console.error('❌ Database connection error:', err);
+  });
+app.use('/api/reports', reportRoutes)
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
