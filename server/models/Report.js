@@ -18,9 +18,13 @@ const reportSchema = new mongoose.Schema({
   status: { 
     type: String, 
     default: 'חדש', 
-    enum: ['חדש', 'בטיפול', 'קריטי', 'ארכיון']
+    enum: ['חדש', 'בטיפול', 'קריטי','טופל', 'ארכיון']
   },
   
+  location: { 
+    type: String 
+  }, 
+
   trackingCode: { 
     type: String, 
     unique: true 

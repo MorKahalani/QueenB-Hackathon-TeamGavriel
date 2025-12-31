@@ -4,9 +4,13 @@ import styles from './styles/App.module.css';
 import AdminPage from './pages/AdminPage/AdminPage'; 
 import CreateReport from './pages/CreateReport';
 import StudentConfirmationPage from './pages/StudentConfirmationPage/StudentConfirmationPage';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'; // חדש
+
+const queryClient = new QueryClient();  // חדש-יצרנו מנהל חדש
 
 function App() {
   return (
+    <QueryClientProvider client={queryClient}> {/* חדש- עוטפים את האתר במנהל החדש כדי שכל הדפים יוכלו להשתמש בו*/}
     <BrowserRouter>
       <div className={styles.app}>
         <header className={styles.appHeader}>
@@ -28,6 +32,7 @@ function App() {
         </footer>
       </div>
     </BrowserRouter>
+    </QueryClientProvider>
   );
 }
 

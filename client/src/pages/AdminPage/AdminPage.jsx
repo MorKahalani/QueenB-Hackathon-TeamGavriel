@@ -5,25 +5,38 @@ import ReportsTable from '../../components/ReportsTable/ReportsTable';
 import StatCard from '../../components/StatCard/StatCard';
 import { useState } from 'react'; 
 import { FiSearch } from "react-icons/fi"; 
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import ReportModal from '../../components/ReportModal/ReportModal';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Box, CircularProgress } from '@mui/material';
+import { useQuery , useMutation, useQueryClient } from '@tanstack/react-query'; 
+import api from '../../services/api'; 
 
-const mockReports = [
-    { id: 'BUL-001', status: 'חדש', subject: 'הפצת סטיקרים פוגעניים', location: 'וואטסאפ כיתתי', description: 'תלמיד יצר סדרת מדבקות (סטיקרים) המציגות תלמיד אחר בסיטואציות מביכות בשיעור ספורט, והפיץ אותן בקבוצה הכיתתית הרשמית בצירוף כיתובים מעליבים.', date: '24.11.2025 10:30' },
-    { id: 'BUL-002', status: 'קריטי', subject: 'חרם חברתי מאורגן', location: 'שכבת כיתות ט\'', description: 'קבוצה של חמש בנות החליטה באופן מאורגן שלא לדבר עם תלמידה מסוימת, להוציא אותה מקבוצות הווטסאפ ולמנוע ממנה לשבת איתן בהפסקה כבר שבוע שלם.', date: '24.11.2025 08:15' },
-    { id: 'BUL-003', status: 'בטיפול', subject: 'איומים ברשתות', location: 'טיקטוק / אינסטגרם', description: 'תחת סרטון שהעלה תלמיד לטיקטוק, נכתבו תגובות אנונימיות הכוללות איומים באלימות פיזית מחוץ לשטח בית הספר בסוף יום הלימודים.', date: '23.11.2025 21:00' },
-    { id: 'BUL-004', status: 'חדש', subject: 'כינויי גנאי עדתיים', location: 'מסדרון קומה 1', description: 'במהלך ההפסקה הגדולה, קבוצת תלמידים קראה בצעקות כינויי גנאי על רקע עדתי כלפי תלמיד שעבר במסדרון, מה שהוביל להתקהלות ועימות מילולי חריף.', date: '25.11.2025 11:50' },
-    { id: 'BUL-005', status: 'קריטי', subject: 'סחיטה באיומים', location: 'אולם ספורט', description: 'תלמיד מהשכבה הבוגרת דורש מתלמיד צעיר להביא לו 50 ש"ח בכל שבוע, ואם לא יעשה זאת, הוא מאיים שיפגע בו ויהרוס לו את הציוד האישי.', date: '25.11.2025 13:20' },
-    { id: 'BUL-006', status: 'בטיפול', subject: 'הפצת שמועות כוזבות', location: 'כלל בית הספר', description: 'הפצת הודעת שרשרת בוואטסאפ המכילה מידע אישי שקרי ורגיש על חיי המשפחה של אחד המורים, במטרה להשפיל אותו מול התלמידים.', date: '22.11.2025 09:00' },
-    { id: 'BUL-007', status: 'בטיפול', subject: 'הדרה ממשחק קבוצתי', location: 'מגרש כדורגל', description: 'בכל פעם שתלמיד מסוים מנסה להצטרף למשחק הכדורגל, קבוצה קבועה של תלמידים "מפוצצת" את המשחק או אומרת לו שהוא לא יכול לשחק כי הוא "חלש מדי".', date: '15.11.2025 10:45' },
-    { id: 'BUL-008', status: 'חדש', subject: 'צילום ללא הסכמה', location: 'שירותי בנים', description: 'ניסיון של שני תלמידים לצלם תלמיד אחר בזמן שהותו בתא השירותים באמצעות הטלפון הנייד מלמעלה, במטרה להפיץ את התמונה לאחר מכן.', date: '25.11.2025 14:10' },
-    { id: 'BUL-009', status: 'בטיפול', subject: 'חיקויים מלעיגים', location: 'כיתה ז\'3', description: 'קבוצת תלמידות מחקה בצורה מוגזמת ומלעיגה את אופן הדיבור של תלמידה שיש לה גמגום קל, בכל פעם שהיא מנסה לענות על שאלה במהלך השיעור.', date: '24.11.2025 12:00' },
-    { id: 'BUL-010', status: 'חדש', subject: 'הסתרה/גניבת ציוד', location: 'כיתת לימוד', description: 'בסוף יום הלימודים, תלמיד גילה שהקלמר והספרים שלו הוחבאו בתוך פח האשפה הכיתתי לאחר שנשפכו עליהם שאריות מזון במכוון.', date: '10.11.2025 15:30' }
-];
+const fetchReports = async () => {
+    const response = await api.get('/api/reports'); 
+    return response.data; 
+};
 
 const AdminPage = () => { 
-    const [allReports, setAllReports] = useState(mockReports); 
+    const queryClient = useQueryClient();
+    
+    const { data: cloudReports, isLoading, isError } = useQuery({
+        queryKey: ['reports'], 
+        queryFn: fetchReports 
+    });
+
+    const updateStatusMutation = useMutation({
+        mutationFn: async ({ id, newStatus }) => {
+            return await api.patch(`/api/reports/${id}`, { status: newStatus });
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries(['reports']);
+        },
+        onError: () => {
+            alert("לא ניתן היה לעדכן את הסטטוס כרגע. אנא נסי שוב.");
+        }
+    });
+
+    const rawReports = cloudReports || []; 
     const [activeFilter, setActiveFilter] = useState('all');
     const [searchTerm, setSearchTerm] = useState('');
     const [showArchive, setShowArchive] = useState(false);
@@ -51,22 +64,16 @@ const AdminPage = () => {
         setReportIdToArchive(null);
     };
 
-    const handleConfirmArchive = () => {
-        const updatedReports = allReports.map(report => 
-            report.id === reportIdToArchive ? { ...report, status: 'ארכיון' } : report
-        );
-        setAllReports(updatedReports);
-        handleCloseConfirm();
-    };
-
     const handleUpdateStatus = (id, newStatus) => {
-        const updatedReports = allReports.map(report => 
-            report.id === id ? { ...report, status: newStatus } : report
-        );
-        setAllReports(updatedReports);
-        if (selectedReport?.id === id) {
+        updateStatusMutation.mutate({ id, newStatus });
+        if (selectedReport?._id === id) {
             setSelectedReport(prev => ({ ...prev, status: newStatus }));
         }
+    };
+
+    const handleConfirmArchive = () => {
+        updateStatusMutation.mutate({ id: reportIdToArchive, newStatus: 'ארכיון' });
+        handleCloseConfirm();
     };
 
     const handleOpenModal = (report) => {
@@ -79,24 +86,49 @@ const AdminPage = () => {
         setSelectedReport(null);
     };
 
-    const reportsToShow = allReports.filter(report => {
-        const matchesSearch = report.id.toLowerCase().includes(searchTerm) || 
-                             report.subject.toLowerCase().includes(searchTerm);
+    const reportsToShow = rawReports.filter(report => {
+        const searchLower = searchTerm.toLowerCase();
+        const matchesSearch = 
+            (report.trackingCode?.toLowerCase().includes(searchLower) || false) || 
+            (report.subject?.toLowerCase().includes(searchLower) || false);
+
         const matchesStatus = activeFilter === 'all' ? true : report.status === activeFilter;
         const isArchiveView = showArchive ? report.status === 'ארכיון' : report.status !== 'ארכיון';
+        
         return matchesSearch && matchesStatus && isArchiveView;
     });
 
-    const activeReports = allReports.filter(r => r.status !== 'ארכיון');
+    const activeReports = rawReports.filter(r => r.status !== 'ארכיון');
     const newCount = activeReports.filter(r => r.status === 'חדש').length; 
     const urgentCount = activeReports.filter(r => r.status === 'קריטי').length; 
     const inProcessCount = activeReports.filter(r => r.status === 'בטיפול').length;
+
+    if (isLoading) {
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', flexDirection: 'column' }}>
+                <CircularProgress color="inherit" />
+                <p style={{ marginTop: '20px', fontSize: '1.2rem' }}>טוען נתונים, נא להמתין...</p>
+            </Box>
+        );
+    }
+
+    if (isError) {
+        return (
+            <div style={{ textAlign: 'center', marginTop: '100px' }}>
+                <h2>חלה שגיאה בטעינת הדיווחים</h2>
+                <p>אנא ודאי שחיבור האינטרנט תקין ונסי לרענן את הדף.</p>
+                <Button variant="contained" onClick={() => window.location.reload()} sx={{ mt: 2, backgroundColor: 'black' }}>
+                    רענון דף
+                </Button>
+            </div>
+        );
+    }
 
     return (
         <div className={styles.adminContainer}>
             <div className={styles.headerRow}>
                 <LogoutButton />
-                <h1>מערכת ניהול דיווחים - שם בית הספר</h1>
+                <h1>מערכת ניהול דיווחים</h1>
                 <div style={{width: '100px'}}></div>
             </div>
       
@@ -167,19 +199,30 @@ const AdminPage = () => {
                     <ExportButton data={reportsToShow} />
                 </div>
             </div>
-            <ReportsTable reports={reportsToShow} onArchive={handleOpenConfirm} onView={handleOpenModal} />
-            <ReportModal open={isModalOpen} report={selectedReport} onClose={handleCloseModal} onUpdateStatus={handleUpdateStatus} />
+
+            <ReportsTable 
+                reports={reportsToShow} 
+                onArchive={handleOpenConfirm} 
+                onView={handleOpenModal} 
+            />
+
+            <ReportModal 
+                open={isModalOpen} 
+                report={selectedReport} 
+                onClose={handleCloseModal} 
+                onUpdateStatus={handleUpdateStatus} 
+            />
+
             <Dialog open={confirmOpen} onClose={handleCloseConfirm} dir="rtl">
                 <DialogTitle>אישור העברה לארכיון</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        שימי לב: ברגע שהדיווח יועבר לארכיון, לא ניתן יהיה להחזיר אותו לטבלה הפעילה.
-                        האם הטיפול בדיווח <strong>{reportIdToArchive}</strong> הסתיים ואת בטוחה שברצונך להמשיך?
+                        האם הטיפול בדיווח הסתיים ואת בטוחה שברצונך להעביר אותו לארכיון?
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions sx={{padding: '15px'}}>
                     <Button onClick={handleCloseConfirm} color="primary" variant="outlined">ביטול</Button>
-                    <Button onClick={handleConfirmArchive} color="error" variant="contained">כן, העבר לארכיון</Button>
+                    <Button onClick={handleConfirmArchive} color="error" variant="contained">כן, העבר</Button>
                 </DialogActions>
             </Dialog>
         </div>
