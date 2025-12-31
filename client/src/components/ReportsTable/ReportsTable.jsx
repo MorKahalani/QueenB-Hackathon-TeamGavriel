@@ -3,7 +3,7 @@ import styles from './ReportsTable.module.css';
 import PropTypes from 'prop-types'; 
 import InventoryIcon from '@mui/icons-material/Inventory';
 
-const ReportsTable = ({ reports, onArchive,onView }) => {
+const ReportsTable = ({ reports, onArchive, onView }) => {
   return (
     <TableContainer component={Paper} className={styles.tableWrapper}>
       <Table dir="rtl">
@@ -27,7 +27,7 @@ const ReportsTable = ({ reports, onArchive,onView }) => {
             </TableRow>
           ) : (
           reports.map((report) => (
-            <TableRow key={report.id} hover>
+            <TableRow key={report._id} hover> 
               <TableCell align="right">
                 <Chip 
                   label={report.status} 
@@ -35,27 +35,38 @@ const ReportsTable = ({ reports, onArchive,onView }) => {
                   variant="outlined" 
                 />
               </TableCell>
-              <TableCell align="right" style={{ fontWeight: 'bold' }}>{report.id}</TableCell>
+              <TableCell align="right" style={{ fontWeight: 'bold' }}>
+                {report.trackingCode}
+              </TableCell> 
               <TableCell align="right">{report.subject}</TableCell>
               <TableCell align="right">{report.location}</TableCell>
               <TableCell align="right" style={{ maxWidth: '200px' }}>
-                  {report.description.length > 15 ? `${report.description.substring(0, 15)}...` : report.description}</TableCell>
-              <TableCell align="right">{report.date}</TableCell>
+                  {report.description && report.description.length > 15 ? `${report.description.substring(0, 15)}...` : report.description}
+              </TableCell>
               <TableCell align="right">
-              <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-                <Button variant="contained" size="small" className={styles.viewBtn} onClick={() => onView(report)}>
-                  צפייה
-                </Button>
-                <Button 
-                  variant="outlined" 
-                  color="secondary" 
-                  onClick={() => onArchive(report.id)}
-                  style={{ minWidth: 'auto', padding: '6px' }}
-                >
-                  <InventoryIcon/>
-                </Button>
-              </div>
-            </TableCell>
+                {report.createdAt ? new Date(report.createdAt).toLocaleString('he-IL', {
+                      day: '2-digit',
+                      month: '2-digit',
+                      year: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    }) : ''}
+              </TableCell>
+              <TableCell align="right">
+                <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+                  <Button variant="contained" size="small" className={styles.viewBtn} onClick={() => onView(report)}>
+                    צפייה
+                  </Button>
+                  <Button 
+                    variant="outlined" 
+                    color="secondary" 
+                    onClick={() => onArchive(report._id)} 
+                    style={{ minWidth: 'auto', padding: '6px' }}
+                  >
+                    <InventoryIcon/>
+                  </Button>
+                </div>
+              </TableCell>
             </TableRow>
           ))
           )}
@@ -66,7 +77,7 @@ const ReportsTable = ({ reports, onArchive,onView }) => {
 };
 
 ReportsTable.propTypes = {
-  reports:PropTypes.array.isRequired,
+  reports: PropTypes.array.isRequired,
   onArchive: PropTypes.func.isRequired,
   onView: PropTypes.func.isRequired,
 };

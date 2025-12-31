@@ -2,14 +2,15 @@ import Report from '../models/Report.js';
 
 export const createReport = async (req, res) => {
   try {
-    const { subject, involvedPeople, description } = req.body;
+    const { subject, involvedPeople, description,location} = req.body;
     const trackingCode = 'BS-' + Math.floor(1000 + Math.random() * 9000);
 
     const newReport = new Report({
       subject,
       involvedPeople,
       description,
-      trackingCode
+      trackingCode,
+      location,
     });
 
     const savedReport = await newReport.save();
@@ -22,7 +23,7 @@ export const createReport = async (req, res) => {
 
 export const getAllReports = async (req, res) => {
   try {
-    const reports = await Report.find({ status: { $ne: 'ארכיון' } });
+    const reports = await Report.find();
     res.status(200).json(reports);
   } catch (error) {
     console.error(error);
