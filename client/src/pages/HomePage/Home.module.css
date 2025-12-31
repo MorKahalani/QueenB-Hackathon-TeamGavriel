@@ -6,5 +6,7 @@
 .headline {
   font-size: 2em;
   margin-bottom: 20px;
-  color: #53474F;
+  color: #000000;
+  text-align: center;
+  width: 100%;
 }
