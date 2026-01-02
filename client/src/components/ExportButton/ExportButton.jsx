@@ -1,31 +1,24 @@
 import { FiDownload } from "react-icons/fi";
 import styles from './ExportButton.module.css';
 import PropTypes from 'prop-types'; 
+import * as XLSX from 'xlsx';
 
 const ExportButton = ({ data }) => {
   const handleExport = () => {
-  
-    const headers = "קוד דיווח,סטטוס,נושא,מיקום,התקבל ב:";
-    const rows = data.map(r => 
-      `${r.id},${r.status},${r.subject},${r.location},${r.date}`
-    ).join("\n");
-    
-    const csvContent = headers + "\n" + rows;
+    const formattedData = data.map(r => ({
+      'קוד דיווח': r.trackingCode,
+      'סטטוס': r.status,
+      'נושא': r.subject,
+      'מיקום': r.location,
+      'תאריך דיווח': r.createdAt ? new Date(r.createdAt).toLocaleString('he-IL') : ""
+    }));
 
-    const universalBOM = "\uFEFF";
-    
-    const blob = new Blob([universalBOM + csvContent], { type: 'text/csv;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    
-    const link = document.createElement("a");
-    link.setAttribute("href", url);
-    link.setAttribute("download", "דיווחים_besafe.csv");
-    document.body.appendChild(link);
-    link.click();
-    
-  
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    const ws = XLSX.utils.json_to_sheet(formattedData);
+    ws['!dir'] = 'rtl';
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "דיווחים");
+    XLSX.writeFile(wb, `דיווחים_BeSafe_${new Date().toLocaleDateString('he-IL')}.xlsx`);
   };
 
   return (
