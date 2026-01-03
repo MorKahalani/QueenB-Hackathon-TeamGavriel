@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route} from 'react-router'
 import Home from './pages/HomePage/HomePage';
+import AdminLogin from './pages/LoginForAdmin/AdminLogin';
 import styles from './styles/App.module.css';
 import AdminPage from './pages/AdminPage/AdminPage'; 
 import CreateReport from './pages/CreateReport';
@@ -21,6 +22,7 @@ function App() {
         <main className={styles.main}>
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/login" element={<AdminLogin />} />
             <Route path="/admin" element={<AdminPage/>} />
             <Route path="/report" element={<CreateReport />} />
             <Route path="/confirmation" element={<StudentConfirmationPage/>} />
