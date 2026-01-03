@@ -7,43 +7,74 @@ import api from '../services/api';
 
 function CreateReport() {
     
-    const navigate = useNavigate();
-    const queryClient = useQueryClient();
+    const navigate = useNavigate(); // navigate function to redirect after submission
+    const queryClient = useQueryClient(); // for invalidating queries after mutation
 
     // data for creating a report
     const [errors, setErrors] = useState({});
     const [selectedSubject, setSelectedSubject] = useState('');
     const [involvedPeople, setInvolvedPeople] = useState('');
     const [description, setDescription] = useState('');
+    const [selectedFiles, setSelectedFiles] = useState([]);
 
-    // Mutation for creating a report
+    // Mutation for creating a report - sends form data to the server
     const mutation = useMutation({
-        mutationFn: (newReport) => api.post('/api/reports', newReport),
+        mutationFn: (formData) => api.post('/api/reports', formData,
+            {
+        headers: {
+            // disables default JSON header for file uploads in order to use multipart/form-data
+            'Content-Type': 'multipart/form-data',
+        },
+    }
+        ),
         onSuccess: () => {
-            queryClient.invalidateQueries(['reports']); // מעדכן את דף המורה
-            navigate('/confirmation');
+            queryClient.invalidateQueries(['reports']); // updates reports data after a new report is created
+            navigate('/confirmation'); // redirects to confirmation page
         },
         onError: () => {
            setErrors(prev => ({ ...prev, server: "שרת לא זמין. נסה שוב מאוחר יותר." }));
         }
     });
 
-    const handleSubmit = (e) => {
-    e.preventDefault();
+    // form submission handler
+    const handleSubmit = async (e) => {
+    e.preventDefault(); // prevents default form submission behavior
+    setErrors({}); // resets previous errors
     let newErrors = {};
 
+    // basic validation
     if (!selectedSubject) newErrors.subject = "חובה לבחור נושא";
     if (!description) newErrors.description = "חובה להוסיף תיאור";
 
+    // if there are validation errors, set them and stop submission
     if (Object.keys(newErrors).length > 0) {
         setErrors(newErrors);
-        return; // עוצר את השליחה
+        return; 
     }
 
-    setErrors({}); // מנקה שגיאות אם הכל תקין
-    mutation.mutate({ subject: selectedSubject, description, involvedPeople });
+    // creating form data to send, including files
+    const formData = new FormData();
+    formData.append('subject', selectedSubject);
+    formData.append('description', description);
+    formData.append('involvedPeople', involvedPeople || '');
+
+    // appending selected files to form data
+    if (selectedFiles && selectedFiles.length > 0) {
+    // Array.from הופך את ה-FileList למערך רגיל שאפשר לעבור עליו
+    Array.from(selectedFiles).forEach(file => {
+        formData.append('files', file);
+    });
+}
+
+    try {
+        await mutation.mutateAsync(formData); // triggers the mutation to submit the form data
+    } catch (err) {
+        console.error("Submission error:", err);
+    }
 };
 
+
+    // predefined subjects with icons and colors
     const subjects = [
         { id: 'self-harm', label: 'פגיעה עצמית', icon: <ShieldAlert size={24} />, colorClass: styles.redCard },
         { id: 'bullying', label: 'בריונות או חרם', icon: <Users size={24} />, colorClass: styles.yellowCard },
@@ -51,6 +82,8 @@ function CreateReport() {
         { id: 'media', label: 'הפצת תמונות', icon: <ImagePlay size={24} />, colorClass: styles.purpleCard },
         { id: 'other', label: 'משהו אחר', icon: <MessageCircle size={24} />, colorClass: styles.grayCard },
     ];
+
+
     return (
         <div className={styles.container}>  
             <div className={styles.headerSection}> 
@@ -141,12 +174,14 @@ function CreateReport() {
                             id="file-upload" 
                             className={styles.hiddenFileInput} 
                             multiple 
+                            onChange={(e) => setSelectedFiles(e.target.files)}
                             accept="image/*"
                         />
                         <label htmlFor="file-upload" className={styles.fileUploadButton}>
                             <Paperclip size={20} className={styles.clipIcon} />
                             <span>בחר קבצים להעלאה</span>
                         </label>
+                        {selectedFiles.length > 0 && <p>{selectedFiles.length} קבצים נבחרו</p>}
                     </div>
                 </div>
                 {errors.server && <p style={{ color: 'red', fontWeight: 'bold' }}>{errors.server}</p>}
@@ -159,10 +194,6 @@ function CreateReport() {
                 </button>
             </form>
         </div>
-        
-
-        
-
     );
 };
 export default CreateReport;

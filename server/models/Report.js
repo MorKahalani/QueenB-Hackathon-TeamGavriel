@@ -29,6 +29,11 @@ const reportSchema = new mongoose.Schema({
     type: String, 
     unique: true 
   },
+
+  // array to store file paths of uploaded evidence files
+  files: [{
+    type: String 
+  }],
   
   createdAt: { 
     type: Date, 
