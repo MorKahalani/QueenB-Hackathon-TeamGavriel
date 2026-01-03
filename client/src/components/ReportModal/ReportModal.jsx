@@ -42,13 +42,42 @@ const ReportModal = ({ open, report, onClose, onUpdateStatus }) => {
               }) : 'אין תאריך'}
           </Typography>
         </Box>
-
         <Box mb={2} p={2} bgcolor="#f5f5f5" borderRadius={2}>
           <Typography variant="subtitle2" color="textSecondary">תיאור המקרה המלא:</Typography>
           <Typography variant="body1" style={{ whiteSpace: 'pre-wrap' }}>
             {report.description}
           </Typography>
         </Box>
+          {report.files && report.files.length > 0 && (
+            <Box mb={2}>
+              <Typography variant="subtitle2" color="textSecondary" gutterBottom>
+                קבצים והוכחות מצורפים:
+              </Typography>
+              <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                {report.files.map((file, index) => (
+                  <Box 
+                    key={index}
+                    component="img"
+                    src={file.startsWith('http') ? file : `http://localhost:5000/${file.replace(/^\//, '')}`}
+                    alt={`קובץ מצורף ${index + 1}`}
+                    sx={{
+                      width: 120,
+                      height: 120,
+                      objectFit: 'cover',
+                      borderRadius: 2,
+                      cursor: 'pointer',
+                      border: '1px solid #ddd',
+                      '&:hover': { opacity: 0.8 }
+                    }}
+                    onClick={() => {
+                    const cleanPath = file.startsWith('http') ? file : `http://localhost:5000/${file.replace(/^\//, '')}`;
+                    window.open(cleanPath, '_blank');
+                  }}
+                  />
+                ))}
+              </Box>
+        </Box>
+          )}
       </DialogContent>
 
       <DialogActions style={{ justifyContent: 'space-between', padding: '16px' }}>
