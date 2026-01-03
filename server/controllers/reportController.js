@@ -3,6 +3,13 @@ import Report from '../models/Report.js';
 export const createReport = async (req, res) => {
   try {
     const { subject, involvedPeople, description,location} = req.body;
+
+    // process uploaded files and get their paths
+    let filePaths = [];
+    if (req.files && req.files.length > 0) {
+      filePaths = req.files.map(file => `/uploads/${file.filename}`);
+    }
+
     const trackingCode = 'BS-' + Math.floor(1000 + Math.random() * 9000);
 
     const newReport = new Report({
@@ -11,6 +18,7 @@ export const createReport = async (req, res) => {
       description,
       trackingCode,
       location,
+      files: filePaths // store file paths in the report document
     });
 
     const savedReport = await newReport.save();
