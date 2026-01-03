@@ -16,6 +16,7 @@ function CreateReport() {
     const [involvedPeople, setInvolvedPeople] = useState('');
     const [description, setDescription] = useState('');
     const [selectedFiles, setSelectedFiles] = useState([]);
+    const [location, setLocation] = useState('');
 
     // Mutation for creating a report - sends form data to the server
     const mutation = useMutation({
@@ -27,9 +28,10 @@ function CreateReport() {
         },
     }
         ),
-        onSuccess: () => {
+        onSuccess: (response) => {
             queryClient.invalidateQueries(['reports']); // updates reports data after a new report is created
-            navigate('/confirmation'); // redirects to confirmation page
+            const realCode = response.data.trackingCode;
+            navigate('/confirmation', { state: { trackingCode: realCode } });
         },
         onError: () => {
            setErrors(prev => ({ ...prev, server: "שרת לא זמין. נסה שוב מאוחר יותר." }));
@@ -55,6 +57,7 @@ function CreateReport() {
     // creating form data to send, including files
     const formData = new FormData();
     formData.append('subject', selectedSubject);
+    formData.append('location', location);
     formData.append('description', description);
     formData.append('involvedPeople', involvedPeople || '');
 
@@ -148,7 +151,17 @@ function CreateReport() {
                     className={styles.inputField}
                 />
                 </div>
-
+                <div className={styles.fieldGroup}>
+                <label htmlFor="location">איפה זה קרה?</label>
+                <input 
+                    id="location"
+                    type="text" 
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    placeholder="למשל: חצר, כיתה,בדרך לביה''ס..." 
+                    className={styles.inputField}
+                />
+                </div>
                 <div className={styles.fieldGroup}>
                 <label htmlFor="eventDescription"> תיאור האירוע </label>
                 <textarea 
