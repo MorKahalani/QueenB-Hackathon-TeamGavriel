@@ -2,10 +2,47 @@ import styles from '../styles/App.module.css';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShieldAlert, Users, Zap, MessageCircle, Lock, ImagePlay, Paperclip } from 'lucide-react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import api from '../services/api';
 
 function CreateReport() {
-    const [selectedSubject, setSelectedSubject] = useState('');
+    
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
+
+    // data for creating a report
+    const [errors, setErrors] = useState({});
+    const [selectedSubject, setSelectedSubject] = useState('');
+    const [involvedPeople, setInvolvedPeople] = useState('');
+    const [description, setDescription] = useState('');
+
+    // Mutation for creating a report
+    const mutation = useMutation({
+        mutationFn: (newReport) => api.post('/api/reports', newReport),
+        onSuccess: () => {
+            queryClient.invalidateQueries(['reports']); // מעדכן את דף המורה
+            navigate('/confirmation');
+        },
+        onError: () => {
+           setErrors(prev => ({ ...prev, server: "שרת לא זמין. נסה שוב מאוחר יותר." }));
+        }
+    });
+
+    const handleSubmit = (e) => {
+    e.preventDefault();
+    let newErrors = {};
+
+    if (!selectedSubject) newErrors.subject = "חובה לבחור נושא";
+    if (!description) newErrors.description = "חובה להוסיף תיאור";
+
+    if (Object.keys(newErrors).length > 0) {
+        setErrors(newErrors);
+        return; // עוצר את השליחה
+    }
+
+    setErrors({}); // מנקה שגיאות אם הכל תקין
+    mutation.mutate({ subject: selectedSubject, description, involvedPeople });
+};
 
     const subjects = [
         { id: 'self-harm', label: 'פגיעה עצמית', icon: <ShieldAlert size={24} />, colorClass: styles.redCard },
@@ -62,13 +99,16 @@ function CreateReport() {
                     </div>
                     ))}
             </div>
+            {errors.subject && <p style={{ color: 'red', textAlign: 'center', fontWeight: 'bold', marginTop: '10px' }}>{errors.subject}</p>}
 
-            <form className={styles.reportForm}>
+            <form className={styles.reportForm} onSubmit={handleSubmit}>
                 <h2 className={styles.formSubtitle}>פרטי הדיווח</h2>
 
                 <div className={styles.fieldGroup}>
                 <label htmlFor="involvedPeople">מי המעורבים? </label>
                 <input 
+                    value={involvedPeople}
+                    onChange={(e) => setInvolvedPeople(e.target.value)}
                     id="involvedPeople" 
                     type="text" 
                     placeholder="פרט מי הפוגע ומי הנפגע, ככל שאתה מרגיש בנוח..." 
@@ -79,11 +119,14 @@ function CreateReport() {
                 <div className={styles.fieldGroup}>
                 <label htmlFor="eventDescription"> תיאור האירוע </label>
                 <textarea 
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
                 id="eventDescription" 
                 placeholder="תאר בפירוט מה קרה, היכן ומתי. שים לב, מידע מפורט יסייע למורה לטפל בדיווח שלך..." 
                 rows = "4"
                 className={styles.textareaField}
                 />
+                {errors.description && <p style={{ color: 'red', fontSize: '0.85rem' }}>{errors.description}</p>}
                 </div>
                 {/* File Upload Section */}
                 <div className={styles.fieldGroup}>
@@ -106,11 +149,14 @@ function CreateReport() {
                         </label>
                     </div>
                 </div>
-
-                <button 
+                {errors.server && <p style={{ color: 'red', fontWeight: 'bold' }}>{errors.server}</p>}
+                <button
+                disabled={mutation.isPending} 
                 type="submit" 
                 className={styles.submitBtn}
-                onClick={() => navigate('/confirmation')}>שלח דיווח אנונימי</button>
+                >
+                    {mutation.isPending ? "שולח דיווח..." : "שלח דיווח אנונימי"}
+                </button>
             </form>
         </div>
         
