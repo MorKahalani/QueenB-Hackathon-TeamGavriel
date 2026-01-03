@@ -14,7 +14,7 @@ const Home = () => {
         <div className={styles.step}>
           <div className={styles.stepIcon}>✍️</div>
           <h3>מדווחים</h3>
-          <p>לוחצים על "לדיווח אנונימי", ממלאים את פרטי המקרה בטופס ושולחים למורה.</p>
+          <p>לוחצים על &apos;לדיווח אנונימי&apos;, ממלאים את פרטי המקרה בטופס ושולחים למורה.</p>
         </div>
       
         <div className={styles.step}>
@@ -41,8 +41,8 @@ const Home = () => {
 
         <div className={styles.roleCard} onClick={() => navigate('/login')}>
           <div className={styles.icon}>👩‍🏫</div>
-          <h2>מורה / צוות חינוכי</h2>
-          <p>כניסה למערכת ניהול הדיווחים ומעקב אחר פניות</p>
+          <h2>התחבר כמורה</h2>
+          <p>כניסה למערכת לצפייה בדיווחים</p>
           <button className={styles.teacherBtn}>כניסת צוות</button>
           </div>
       </div>
