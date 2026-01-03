@@ -46,7 +46,7 @@ const ReportsTable = ({ reports, onArchive, onView }) => {
                 {report.trackingCode}
               </TableCell> 
               <TableCell align="right">{subjectTranslations[report.subject] || report.subject} </TableCell>
-              <TableCell align="right">{report.location}</TableCell>
+              <TableCell align="right"> {report.location ? ( report.location) : (<span style={{ color: '#b0b0b0', fontStyle: 'italic' }}>לא הוסף מיקום</span>)}</TableCell>
               <TableCell align="right" style={{ maxWidth: '200px' }}>
                   {report.description && report.description.length > 15 ? `${report.description.substring(0, 15)}...` : report.description}
               </TableCell>
