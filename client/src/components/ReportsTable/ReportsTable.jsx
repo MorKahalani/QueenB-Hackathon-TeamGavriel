@@ -2,7 +2,14 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
 import styles from './ReportsTable.module.css';
 import PropTypes from 'prop-types'; 
 import InventoryIcon from '@mui/icons-material/Inventory';
-
+ 
+const subjectTranslations = {
+  'self-harm': 'פגיעה עצמית',
+  'bullying': 'בריונות או חרם',
+  'violence':'אלימות או איומים',
+  'media': 'הפצת תמונות',
+  'other':'אחר'
+};
 const ReportsTable = ({ reports, onArchive, onView }) => {
   return (
     <TableContainer component={Paper} className={styles.tableWrapper}>
@@ -38,7 +45,7 @@ const ReportsTable = ({ reports, onArchive, onView }) => {
               <TableCell align="right" style={{ fontWeight: 'bold' }}>
                 {report.trackingCode}
               </TableCell> 
-              <TableCell align="right">{report.subject}</TableCell>
+              <TableCell align="right">{subjectTranslations[report.subject] || report.subject} </TableCell>
               <TableCell align="right">{report.location}</TableCell>
               <TableCell align="right" style={{ maxWidth: '200px' }}>
                   {report.description && report.description.length > 15 ? `${report.description.substring(0, 15)}...` : report.description}
