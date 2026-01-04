@@ -1,10 +1,12 @@
 import { Container, Typography, Button, Paper } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate ,useLocation } from 'react-router-dom';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import CodeTrackingBox from '../../components/CodeTrackingBox/CodeTrackingBox';
 
 const StudentConfirmationPage = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+    const trackingCode = location.state?.trackingCode;
 
     return (
         <Container maxWidth="sm" sx={{ mt: 8, textAlign: 'center' }}>
@@ -18,7 +20,7 @@ const StudentConfirmationPage = () => {
                     תודה על השיתוף
                 </Typography>
                 <CodeTrackingBox 
-                code="ABC-123" 
+                code={trackingCode}
                 title="זהו קוד המעקב האישי שלך"
                 explanation="יש לשמור את הקוד כדי לצפות בתשובת המורה בהמשך"
                 />
