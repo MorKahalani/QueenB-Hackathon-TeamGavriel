@@ -6,5 +6,161 @@
 .headline {
   font-size: 2em;
   margin-bottom: 20px;
-  color: #53474F;
+  color: #000000;
+  text-align: center;
+  width: 100%;
+}
+
+
+.selectionContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start; 
+    padding-top: 50px;
+    min-height: 100vh;
+    direction: rtl;
+    gap: 10px; 
+}
+
+.mainTitle {
+    font-size: 3rem;
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+
+.cardsWrapper {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    width: 100%;
+    margin-top: 0px; 
+    padding-bottom: 40px;
+}
+
+.roleCard {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    width: 280px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 2px solid transparent;
+}
+
+
+.roleCard:hover {
+    transform: translateY(-10px); 
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    border-color: #3498db;
+}
+
+.icon {
+    font-size: 4rem;
+    margin-bottom: 15px;
+}
+
+.roleCard h2 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+}
+
+.roleCard p {
+    color: #636e72;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+
+.studentBtn, .teacherBtn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.studentBtn {
+    background-color: #3498db;
+    color: white;
+}
+
+.teacherBtn {
+    background-color: #3498db;
+    color: white;
+}
+
+.studentBtn:hover { background-color: #27ae60; }
+.teacherBtn:hover { background-color: #27ae60; }
+
+/* .subtitle {
+    font-size: 1.2rem;
+    color: #7f8c8d;
+    margin-bottom: 40px;
+} */
+ 
+
+.infoTitle {
+    font-size: 1.8rem;
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+.infoSection {
+    width: 100%;
+    max-width: 1000px; 
+    margin: 0 auto 10px auto; 
+    text-align: center;
+    direction: rtl;
+}
+
+.stepsGrid {
+    display: flex; 
+    flex-direction: row; 
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    direction: rtl; 
+}
+.step {
+    flex: 1; 
+    min-width: 250px; 
+    max-width: 300px; 
+    background: #eeeff3;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stepIcon {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.step h3 {
+    color: #3498db;
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+.step p {
+    font-size: 0.95rem;
+    color: #636e72;
+    line-height: 1.4;
+}
+
+/*התאמה לנייד */
+@media (max-width: 768px) {
+    .stepsGrid {
+        grid-template-columns: 1fr;
+    }
 }
