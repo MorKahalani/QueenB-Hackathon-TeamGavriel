@@ -1,8 +1,8 @@
+import dotenv from 'dotenv';
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import rubberDuckRoutes from './routes/rubberDucks.js'; // Import the routes
 import mongoose from 'mongoose';
 import reportRoutes from './routes/reportRoutes.js';
