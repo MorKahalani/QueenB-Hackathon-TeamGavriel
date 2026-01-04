@@ -30,6 +30,16 @@ const reportSchema = new mongoose.Schema({
     unique: true 
   },
 
+  analysis: {
+    type: String,
+    default: ''
+  },
+
+  isViewed: {
+    type: Boolean,
+    default: false
+  },
+
   // array to store file paths of uploaded evidence files
   files: [{
     type: String 

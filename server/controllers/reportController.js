@@ -1,11 +1,10 @@
 import Report from '../models/Report.js';
-import OpenAI from 'openai'; 
+import OpenAI from 'openai';
 
 export const createReport = async (req, res) => {
   try {
-    const { subject, involvedPeople, description,location} = req.body;
+    const { subject, involvedPeople, description, location } = req.body;
 
-    // process uploaded files and get their paths
     let filePaths = [];
     if (req.files && req.files.length > 0) {
       filePaths = req.files.map(file => `/uploads/${file.filename}`);
@@ -13,13 +12,46 @@ export const createReport = async (req, res) => {
 
     const trackingCode = 'BS-' + Math.floor(1000 + Math.random() * 9000);
 
+    let aiAnalysis = '';
+    let autoStatus = 'חדש';
+
+    if (process.env.OPENAI_API_KEY) {
+      try {
+        const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+        const response = await openai.chat.completions.create({
+          model: "gpt-4o-mini",
+          messages: [
+            {
+              role: "system",
+              content: "אתה יועץ חינוכי. נתח את הדיווח בקצרה (עד 4 שורות). " +
+                       "חובה להתחיל את התשובה ב: 'סטטוס: קריטי' או 'סטטוס: רגיל'. " +
+                       "קבע 'קריטי' אם יש חשש לאלימות, איומים או אירוע במקום מבודד. " +
+                       "לאחר מכן תן 2 המלצות קצרות למורה."
+            },
+            { role: "user", content: `נושא: ${subject}. מיקום: ${location || "לא צוין"}. תיאור: ${description}` }
+          ],
+          temperature: 0.7,
+        });
+
+        const fullContent = response.choices[0].message.content;
+        if (fullContent.includes('סטטוס: קריטי')) {
+          autoStatus = 'קריטי';
+        }
+        aiAnalysis = fullContent.replace(/^סטטוס:\s*(קריטי|רגיל)[.\s\n]*/, '').trim();
+      } catch (aiError) {
+        console.error("AI automated analysis failed:", aiError);
+      }
+    }
+
     const newReport = new Report({
       subject,
       involvedPeople,
       description,
-      trackingCode,
       location,
-      files: filePaths // store file paths in the report document
+      trackingCode,
+      status: autoStatus,
+      analysis: aiAnalysis,
+      files: filePaths
     });
 
     const savedReport = await newReport.save();
@@ -33,6 +65,25 @@ export const createReport = async (req, res) => {
 export const getAllReports = async (req, res) => {
   try {
     const reports = await Report.find();
+
+    reports.sort((a, b) => {
+      const aCriticalNew = (a.status === 'קריטי' && !a.isViewed);
+      const bCriticalNew = (b.status === 'קריטי' && !b.isViewed);
+      if (aCriticalNew && !bCriticalNew) return -1;
+      if (!aCriticalNew && bCriticalNew) return 1;
+
+      
+      if (a.status === 'קריטי' && b.status !== 'קריטי') return -1;
+      if (a.status !== 'קריטי' && b.status === 'קריטי') return 1;
+
+      
+      if (a.status === 'חדש' && b.status !== 'חדש') return -1;
+      if (a.status !== 'חדש' && b.status === 'חדש') return 1;
+
+    
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    });
+
     res.status(200).json(reports);
   } catch (error) {
     console.error(error);
@@ -42,17 +93,18 @@ export const getAllReports = async (req, res) => {
 
 export const updateReportStatus = async (req, res) => {
   try {
-    const { id } = req.params; 
-    const { status } = req.body; 
+    const { id } = req.params;
+    const { status, isViewed } = req.body;
+    
     const updatedReport = await Report.findByIdAndUpdate(
-      id, 
-      { status }, 
-      { new: true } 
+      id,
+      { status, isViewed },
+      { new: true }
     );
     res.status(200).json(updatedReport);
   } catch (error) {
     console.error(error);
-    res.status(400).json({ message: 'שגיאה בעדכון הסטטוס' });
+    res.status(400).json({ message: 'שגיאה בעדכון הדיווח' });
   }
 };
 
@@ -63,51 +115,5 @@ export const getArchivedReports = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'שגיאה במשיכת הארכיון' });
-  }
-};
-
-export const analyzeReportWithAI = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    if (!process.env.OPENAI_API_KEY) {
-       console.error("Missing OpenAI API Key in .env file");
-       return res.status(500).json({ message: 'מפתח AI חסר בשרת. ודאי שקובץ ה-.env מוגדר כראוי.' });
-    }
-    const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-    });
-
-    const report = await Report.findById(id);
-    if (!report) {
-      return res.status(404).json({ message: 'דיווח לא נמצא' });
-    }
-
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini", 
-      messages: [
-      {
-      role: "system",
-      content: "אתה יועץ חינוכי מומחה לטיפול בבריונות. נתח את הדיווח הבא וספק תשובה בעברית הכוללת: " +
-                "1. סיכום קצר של האירוע. " +
-                "2. קביעת רמת דחיפות (קריטי/רגיל) בצירוף הסבר מדוע בחרת ברמה זו. **שים לב במיוחד למיקום האירוע** - האם המיקום מעיד על חוסר פיקוח או מקום מבודד שמגביר את הסיכון? " +
-                "3. קביעה האם מדובר בבריונות/חרם מתמשך או אירוע חד פעמי. " +
-                "4. 3 המלצות מעשיות למורה, **כולל המלצה ספציפית שקשורה למיקום האירוע** (למשל: תגבור השגחה באזור זה, בדיקת מצלמות אם יש, או שינוי סידורי הושבה)." +
-                "החזר את התשובה בפורמט ברור עם נקודות (Bullet points)."
-      },
-        {
-          role: "user",
-          content: `נושא: ${report.subject}. מיקום: ${report.location || "לא צוין"}. תיאור המקרה: ${report.description}`
-        }
-      ],
-      temperature: 0.7, 
-    });
-
-    const aiAnalysis = response.choices[0].message.content;
-    res.status(200).json({ analysis: aiAnalysis });
-    
-  } catch (error) {
-    console.error("AI Analysis Error:", error);
-    res.status(500).json({ message: 'שגיאה בניתוח הדיווח על ידי ה-AI', error: error.message });
   }
 };
