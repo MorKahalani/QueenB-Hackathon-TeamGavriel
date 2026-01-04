@@ -1,8 +1,8 @@
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Chip, Button } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Chip, Button, Box } from '@mui/material';
 import styles from './ReportsTable.module.css';
 import PropTypes from 'prop-types'; 
 import InventoryIcon from '@mui/icons-material/Inventory';
- 
+
 const subjectTranslations = {
   'self-harm': 'פגיעה עצמית',
   'bullying': 'בריונות או חרם',
@@ -10,6 +10,7 @@ const subjectTranslations = {
   'media': 'הפצת תמונות',
   'other':'אחר'
 };
+
 const ReportsTable = ({ reports, onArchive, onView }) => {
   return (
     <TableContainer component={Paper} className={styles.tableWrapper}>
@@ -34,13 +35,25 @@ const ReportsTable = ({ reports, onArchive, onView }) => {
             </TableRow>
           ) : (
           reports.map((report) => (
-            <TableRow key={report._id} hover> 
+            <TableRow 
+              key={report._id} 
+              hover 
+              style={{ 
+                backgroundColor: !report.isViewed ? 'rgba(255, 244, 229, 0.5)' : 'inherit',
+                fontWeight: !report.isViewed ? 'bold' : 'normal'
+              }}
+            > 
               <TableCell align="right">
-                <Chip 
-                  label={report.status} 
-                  color={report.status === 'קריטי' ? 'error' : report.status === 'בטיפול' ? 'primary' : 'success'} 
-                  variant="outlined" 
-                />
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Chip 
+                    label={report.status} 
+                    color={report.status === 'קריטי' ? 'error' : report.status === 'בטיפול' ? 'primary' : 'success'} 
+                    variant={!report.isViewed ? "filled" : "outlined"} 
+                  />
+                  {!report.isViewed && (
+                    <Box sx={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#1976d2' }} />
+                  )}
+                </Box>
               </TableCell>
               <TableCell align="right" style={{ fontWeight: 'bold' }}>
                 {report.trackingCode}
@@ -48,7 +61,7 @@ const ReportsTable = ({ reports, onArchive, onView }) => {
               <TableCell align="right">{subjectTranslations[report.subject] || report.subject} </TableCell>
               <TableCell align="right"> {report.location ? ( report.location) : (<span style={{ color: '#b0b0b0', fontStyle: 'italic' }}>לא הוסף מיקום</span>)}</TableCell>
               <TableCell align="right" style={{ maxWidth: '200px' }}>
-                  {report.description && report.description.length > 15 ? `${report.description.substring(0, 15)}...` : report.description}
+                  {report.description && report.description.length > 25 ? `${report.description.substring(0, 25)}...` : report.description}
               </TableCell>
               <TableCell align="right">
                 {report.createdAt ? new Date(report.createdAt).toLocaleString('he-IL', {

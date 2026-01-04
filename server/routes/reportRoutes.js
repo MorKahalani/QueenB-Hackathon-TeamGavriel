@@ -3,18 +3,16 @@ import {
   createReport, 
   getAllReports, 
   updateReportStatus, 
-  getArchivedReports,
-  analyzeReportWithAI
+  getArchivedReports
+ 
 } from '../controllers/reportController.js';
 
-import upload from '../middleware/multerConfig.js'; // multer (allows file uploads) configuration
+import upload from '../middleware/multerConfig.js'; 
 
 const router = express.Router();
-
-router.post('/', upload.array('files', 5), createReport);  // allows up to 5 files to be uploaded with the report     
+router.post('/', upload.array('files', 5), createReport);   
 router.get('/', getAllReports);            
 router.get('/archived', getArchivedReports); 
 router.patch('/:id', updateReportStatus);  
-router.get('/:id/analyze', analyzeReportWithAI);
 
 export default router;

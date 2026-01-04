@@ -18,21 +18,22 @@ const fetchReports = async () => {
 
 const AdminPage = () => { 
     const queryClient = useQueryClient();
-    
     const { data: cloudReports, isLoading, isError } = useQuery({
         queryKey: ['reports'], 
-        queryFn: fetchReports 
+        queryFn: fetchReports,
+        refetchInterval: 10000, 
+        refetchOnWindowFocus: true
     });
 
-    const updateStatusMutation = useMutation({
-        mutationFn: async ({ id, newStatus }) => {
-            return await api.patch(`/api/reports/${id}`, { status: newStatus });
+    const updateReportMutation = useMutation({
+        mutationFn: async ({ id, updates }) => {
+            return await api.patch(`/api/reports/${id}`, updates);
         },
         onSuccess: () => {
             queryClient.invalidateQueries(['reports']);
         },
         onError: () => {
-            alert("לא ניתן היה לעדכן את הסטטוס כרגע. אנא נסי שוב.");
+            alert("לא ניתן היה לעדכן את הדיווח כרגע. אנא נסי שוב.");
         }
     });
 
@@ -65,20 +66,26 @@ const AdminPage = () => {
     };
 
     const handleUpdateStatus = (id, newStatus) => {
-        updateStatusMutation.mutate({ id, newStatus });
+        updateReportMutation.mutate({ id, updates: { status: newStatus } });
         if (selectedReport?._id === id) {
             setSelectedReport(prev => ({ ...prev, status: newStatus }));
         }
     };
 
     const handleConfirmArchive = () => {
-        updateStatusMutation.mutate({ id: reportIdToArchive, newStatus: 'ארכיון' });
+        updateReportMutation.mutate({ id: reportIdToArchive, updates: { status: 'ארכיון' } });
         handleCloseConfirm();
     };
-
     const handleOpenModal = (report) => {
         setSelectedReport(report);
         setIsModalOpen(true);
+
+        if (!report.isViewed) {
+            updateReportMutation.mutate({ 
+                id: report._id, 
+                updates: { isViewed: true } 
+            });
+        }
     };
 
     const handleCloseModal = () => {
