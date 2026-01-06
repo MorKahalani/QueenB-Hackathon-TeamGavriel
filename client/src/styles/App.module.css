@@ -294,3 +294,8 @@
     font-size: 15px;
     color: #444;
 }
+
+.errorBorder {
+    border: 2px solid #ff4b4b !important;
+    background-color: #fff5f5; /* גוון אדום בהיר מאוד לרקע */
+}

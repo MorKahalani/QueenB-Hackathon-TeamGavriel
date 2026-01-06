@@ -1,52 +1,62 @@
 import styles from './Home.module.css';
 import { useNavigate } from 'react-router-dom';
-/* import RandomDuck from '../../components/RandomDuck/RandomDuck.jsx'; */
-
+// הוסיפי את FiLayout לייבוא כאן
+import { FiShield, FiUsers, FiLock, FiLayout } from "react-icons/fi"; 
 
 const Home = () => {
   const navigate = useNavigate();
+
+  // חובה להגדיר את המשתנה לפני שמשתמשים בו
+  const isLoggedIn = !!localStorage.getItem('token');
+
   return (
     <div className={styles.home}>
-      <h1 className={styles.headline}>ברוכים הבאים למערכת הדיווחים האנונימית</h1>
+      <header className={styles.heroSection}>
+        <h1 className={styles.headline}>SafeSpace - מערכת ניהול דיווחים לצוות החינוכי</h1>
+        <p className={styles.subline}>המרחב הבטוח שלך לניהול, מעקב וטיפול בדיווחי תלמידים באופן דיסקרטי.</p>
+      </header>
     
-    <div className={styles.infoSection}>
-      <div className={styles.stepsGrid}>
-        <div className={styles.step}>
-          <div className={styles.stepIcon}>✍️</div>
-          <h3>מדווחים</h3>
-          <p>לוחצים על &apos;לדיווח אנונימי&apos;, ממלאים את פרטי המקרה בטופס ושולחים למורה.</p>
-        </div>
-      
-        <div className={styles.step}>
-          <div className={styles.stepIcon}>🔒</div>
-          <h3>נשארים אנונימיים</h3>
-          <p>הדיווח מגיע למורה ללא פרטים מזהים. המערכת שומרת על הפרטיות שלכם באופן מלא.</p>
-        </div>
-
-        <div className={styles.step}>
-          <div className={styles.stepIcon}>🔑</div>
-          <h3>עוקבים אחר הטיפול</h3>
-          <p>בסיום תקבלו קוד מעקב אישי. שמרו אותו כדי לצפות בתשובת המורה ולהמשיך בשיחה.</p>
-        </div>
-      </div>
-    </div>
-    <div className={styles.selectionContainer}>
-      <div className={styles.cardsWrapper}>
-          <div className={styles.roleCard} onClick={() => navigate('/report')}>
-          <div className={styles.icon}>🔒💬</div>
-          <h2>תלמידה יקרה, תלמיד יקר</h2>
-          <p>צריכים לשתף במשהו שקרה? כאן ניתן לספר למורה באנונימיות מלאה</p>
-          <button className={styles.studentBtn}>לדיווח אנונימי</button>
-        </div>
-
-        <div className={styles.roleCard} onClick={() => navigate('/login')}>
-          <div className={styles.icon}>👩‍🏫</div>
-          <h2>התחבר כמורה</h2>
-          <p>כניסה למערכת לצפייה בדיווחים</p>
-          <button className={styles.teacherBtn}>כניסת צוות</button>
+      <div className={styles.infoSection}>
+        <div className={styles.stepsGrid}>
+          <div className={styles.step}>
+            <div className={styles.stepIcon}><FiShield /></div>
+            <h3>ניהול מוגן</h3>
+            <p>צפייה בדיווחים מסוננים לפי בית הספר והמורה המטפלת בלבד.</p>
           </div>
+        
+          <div className={styles.step}>
+            <div className={styles.stepIcon}><FiUsers /></div>
+            <h3>חיבור לקהילה</h3>
+            <p>כל מורה מקבלת את פניות התלמידים ששויכו אליה בזמן אמת.</p>
+          </div>
+
+          <div className={styles.step}>
+            <div className={styles.stepIcon}><FiLock /></div>
+            <h3>אבטחה מלאה</h3>
+            <p>גישה למערכת באמצעות הצפנת JWT המבטיחה הגנה על פרטיות התלמידים והצוות.</p>
+          </div>
+        </div>
       </div>
-    </div>
+
+      <div className={styles.selectionContainer}>
+        <div className={styles.centerAction}>
+          {isLoggedIn ? (
+            <div className={styles.roleCard} onClick={() => navigate('/admin')}>
+              <div className={styles.teacherIcon}><FiLayout /></div>
+              <h2>שלום, חזרת למערכת</h2>
+              <p>כל הדיווחים מחכים לך בלוח הניהול המאובטח שלך.</p>
+              
+            </div>
+          ) : (
+            <div className={styles.roleCard} onClick={() => navigate('/login')}>
+              <div className={styles.teacherIcon}>👩‍🏫</div>
+              <h2>כניסת צוות הוראה</h2>
+              <p>התחברי כדי לצפות בדיווחים החדשים ולנהל את הטיפול באירועים.</p>
+              
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

@@ -48,6 +48,16 @@ const reportSchema = new mongoose.Schema({
   createdAt: { 
     type: Date, 
     default: Date.now 
+  },
+
+  teacherId: { 
+  type: mongoose.Schema.Types.ObjectId, 
+  ref: 'User', // יוצר קשר לאוסף המשתמשים
+  required: true 
+  },
+  schoolId: { 
+    type: String, 
+    required: true 
   }
 });
 

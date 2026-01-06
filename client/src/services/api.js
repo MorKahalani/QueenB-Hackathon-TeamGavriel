@@ -9,4 +9,21 @@ const axiosInstance = axios.create({
   },
 });
 
+axiosInstance.interceptors.request.use(
+  (config) => {
+    // שליפת הטוקן מהאחסון המקומי של הדפדפן
+    const token = localStorage.getItem('token');
+    
+    if (token) {
+      // הוספת הטוקן לכותרת x-auth-token כפי שהגדרנו ב-Middleware בשרת
+      config.headers['x-auth-token'] = token;
+    }
+    
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 export default axiosInstance;

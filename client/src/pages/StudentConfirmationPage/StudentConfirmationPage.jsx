@@ -1,10 +1,10 @@
-import { Container, Typography, Button, Paper } from '@mui/material';
-import { useNavigate ,useLocation } from 'react-router-dom';
+import { Container, Typography, Paper } from '@mui/material';
+import {useLocation } from 'react-router-dom';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import CodeTrackingBox from '../../components/CodeTrackingBox/CodeTrackingBox';
 
 const StudentConfirmationPage = () => {
-    const navigate = useNavigate();
+    //const navigate = useNavigate();
     const location = useLocation();
     const trackingCode = location.state?.trackingCode;
 
@@ -25,14 +25,14 @@ const StudentConfirmationPage = () => {
                 explanation="יש לשמור את הקוד כדי לצפות בתשובת המורה בהמשך"
                 />
                 <br />
-                <Button 
+                {/* <Button 
                     variant="contained" 
                     size="large"
                     onClick={() => navigate('/report')}
                     sx={{ backgroundColor: '#000', '&:hover': { backgroundColor: '#333' } }}
                 >
                    לדיווח נוסף
-                </Button>
+                </Button> */}
             </Paper>
         </Container>
     );

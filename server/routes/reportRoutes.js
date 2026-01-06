@@ -6,12 +6,13 @@ import {
   getArchivedReports
  
 } from '../controllers/reportController.js';
-
+import auth from '../middleware/auth.js';
 import upload from '../middleware/multerConfig.js'; 
 
 const router = express.Router();
+
 router.post('/', upload.array('files', 5), createReport);   
-router.get('/', getAllReports);            
+router.get('/', auth, getAllReports);            
 router.get('/archived', getArchivedReports); 
 router.patch('/:id', updateReportStatus);  
 
