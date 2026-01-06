@@ -87,7 +87,7 @@ function CreateReport() {
     ];
 
 
-    return (
+    return ( 
         <div className={styles.container}>  
             <div className={styles.headerSection}> 
                 <h1 className={styles.mainTitle}>דיווח בטוח וסודי</h1>
@@ -207,6 +207,8 @@ function CreateReport() {
                 </button>
             </form>
         </div>
+
+
     );
 };
 export default CreateReport;
