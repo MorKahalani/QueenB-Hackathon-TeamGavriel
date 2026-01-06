@@ -6,7 +6,7 @@ import api from '../../services/api';
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  //const [isLoading, setIsLoading] = useState(false);
+  const [, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {

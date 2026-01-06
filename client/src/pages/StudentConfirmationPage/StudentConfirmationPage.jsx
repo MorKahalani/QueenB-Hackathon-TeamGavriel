@@ -1,5 +1,5 @@
 import { Container, Typography, Paper } from '@mui/material';
-import { useNavigate ,useLocation } from 'react-router-dom';
+import {useLocation } from 'react-router-dom';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import CodeTrackingBox from '../../components/CodeTrackingBox/CodeTrackingBox';
 
