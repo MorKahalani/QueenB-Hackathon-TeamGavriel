@@ -1,6 +1,6 @@
 import { FiLogOut } from "react-icons/fi"; 
 import './LogoutButton.css'; 
-import { useNavigate } from 'react-router-dom'; // חסר לך!
+//import { useNavigate } from 'react-router-dom'; // חסר לך!
 import toast from 'react-hot-toast';
 
 const LogoutButton = () => {

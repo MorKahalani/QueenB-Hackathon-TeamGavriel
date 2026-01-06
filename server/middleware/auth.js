@@ -19,6 +19,7 @@ const auth = (req, res, next) => {
     // 5. הכל תקין - ממשיכים לפונקציה הבאה (ה-Controller)
     next();
   } catch (err) {
+    console.error("Token verification failed:", err);
     res.status(401).json({ msg: 'הטוקן אינו תקף' });
   }
 };
