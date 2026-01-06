@@ -1,34 +1,55 @@
 /* Layout.module.css */
+
 .wrapper {
+    width: 100%;
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    background-color: #ffffff;
-    position: relative; /* מאפשר ללוגו לצוף מעל */
+    display: block; 
 }
 
 .header {
-    position: absolute; /* מקבע את הלוגו לפינה */
-    top: 1px;          /* מרחק מהלמעלה */
-    left: 4px;         /* מרחק מהצד שמאל */
+    width: 100%;
+    /* הגדלנו ל-90px כי הלוגו שלך הוא 62px - זה נותן לו אוויר */
+    height: 90px; 
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; 
+    padding: 0 40px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    
+    /* שינוי כאן: relative במקום sticky יגרום לו להיעלם בגלילה */
+    position: relative; 
+    
+    top: 0;
     z-index: 1000;
+    box-sizing: border-box;
+    direction: ltr; 
+}
+
+.logoArea {
+    display: flex;
+    align-items: center;
+    /* מונע מהלוגו להידחס */
+    flex-shrink: 0; 
 }
 
 .logo {
-    height: 69px;       /* גודל עדין כמו ב-Typeform */
+    height: 62px !important; 
     width: auto;
-    display: block;
-    transition: opacity 0.3s ease;
+    object-fit: contain;
 }
 
-.logo:hover {
-    opacity: 0.7;
+.actionsArea {
+    display: flex;
+    align-items: center;
+    /* מונע מכפתור היציאה להידחק אל מחוץ למסך */
+    flex-shrink: 0; 
+    min-width: fit-content;
 }
 
 .content {
-    flex: 1;
-    display: flex;
-    align-items: center;    /* ממרכז את התוכן אנכית */
-    justify-content: center; /* ממרכז את התוכן אופקית */
-    padding: 20px;
+    width: 100%;
+    padding: 20px; 
+    box-sizing: border-box;
+    direction: rtl; 
 }

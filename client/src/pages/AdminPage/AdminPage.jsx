@@ -96,7 +96,7 @@ const AdminPage = () => {
                 <Box>
                     <Typography variant="h4" sx={{ fontWeight: 'bold' }}>לוח ניהול דיווחים</Typography>
                 </Box>
-                <LogoutButton />
+                {/* <LogoutButton /> */}
             </Box>
 
             <Box sx={{ display: 'flex', gap: 2, mb: 4 }}>
@@ -124,8 +124,25 @@ const AdminPage = () => {
                             <MenuItem value="טופל">טופלו</MenuItem>
                         </Select>
                     </FormControl>
-                    <Button variant="outlined" color="inherit" startIcon={<InventoryIcon />} onClick={() => setShowArchive(!showArchive)}>
-                        {showArchive ? "חזור" : "ארכיון"}
+                    <Button 
+                        variant="outlined" 
+                        color="inherit" 
+                        onClick={() => setShowArchive(!showArchive)}
+                        sx={{ 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            gap: 1.5,
+                            px: 3,
+                            py: 1,
+                            borderRadius: 2,
+                            borderColor: '#e2e8f0',
+                            '&:hover': { bgcolor: '#f8fafc' }
+                        }}
+                    >
+                        <InventoryIcon sx={{ fontSize: 20 }} />
+                        <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                            {showArchive ? "חזור" : "ארכיון"}
+                        </Typography>
                     </Button>
                     <ExportButton data={reportsToShow} />
                 </Box>

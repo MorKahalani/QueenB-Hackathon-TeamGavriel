@@ -41,6 +41,9 @@
     padding: 20px;
     direction: rtl; 
     padding-bottom: 50px; /* רווח קטן לפני הפוטר */
+    width: 100%;
+    max-width: 900px; /* רוחב נוח לקריאה בטפסים */
+    margin: 0 auto;
 }
 
 .footer {
