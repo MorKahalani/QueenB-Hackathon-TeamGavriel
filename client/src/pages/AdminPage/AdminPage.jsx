@@ -1,15 +1,26 @@
 import LogoutButton from '../../components/LogoutButton/LogoutButton';
 import ExportButton from '../../components/ExportButton/ExportButton';
-import styles from './AdminPage.module.css'; 
 import ReportsTable from '../../components/ReportsTable/ReportsTable';
 import StatCard from '../../components/StatCard/StatCard';
 import { useState } from 'react'; 
 import { FiSearch } from "react-icons/fi"; 
 import InventoryIcon from '@mui/icons-material/Inventory';
 import ReportModal from '../../components/ReportModal/ReportModal';
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Box, CircularProgress } from '@mui/material';
+import { 
+  Button, Dialog, DialogActions, DialogContent, DialogContentText, 
+  DialogTitle, Box, CircularProgress, Typography, Paper, 
+  FormControl, InputLabel, Select, MenuItem, TextField, InputAdornment, Chip 
+} from '@mui/material';
 import { useQuery , useMutation, useQueryClient } from '@tanstack/react-query'; 
 import api from '../../services/api'; 
+
+const subjectTranslations = {
+  'self-harm': 'פגיעה עצמית',
+  'bullying': 'בריונות או חרם',
+  'violence': 'אלימות או איומים',
+  'media': 'הפצת תמונות',
+  'other': 'אחר'
+};
 
 const fetchReports = async () => {
     const response = await api.get('/api/reports'); 
@@ -18,26 +29,6 @@ const fetchReports = async () => {
 
 const AdminPage = () => { 
     const queryClient = useQueryClient();
-    const { data: cloudReports, isLoading, isError } = useQuery({
-        queryKey: ['reports'], 
-        queryFn: fetchReports,
-        refetchInterval: 10000, 
-        refetchOnWindowFocus: true
-    });
-
-    const updateReportMutation = useMutation({
-        mutationFn: async ({ id, updates }) => {
-            return await api.patch(`/api/reports/${id}`, updates);
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries(['reports']);
-        },
-        onError: () => {
-            alert("לא ניתן היה לעדכן את הדיווח כרגע. אנא נסי שוב.");
-        }
-    });
-
-    const rawReports = cloudReports || []; 
     const [activeFilter, setActiveFilter] = useState('all');
     const [searchTerm, setSearchTerm] = useState('');
     const [showArchive, setShowArchive] = useState(false);
@@ -46,25 +37,23 @@ const AdminPage = () => {
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [reportIdToArchive, setReportIdToArchive] = useState(null);
 
-    const handleSearch = (event) => {
-        setSearchTerm(event.target.value.toLowerCase());
-    };
+    const { data: cloudReports, isLoading, isError } = useQuery({
+        queryKey: ['reports'], 
+        queryFn: fetchReports,
+        refetchInterval: 5000, 
+        staleTime: 0, 
+        refetchOnWindowFocus: true
+    });
 
-    const filterReports = (status) => {
-        setActiveFilter(status);
-        setShowArchive(false); 
-    };
+    const updateReportMutation = useMutation({
+        mutationFn: async ({ id, updates }) => {
+            return await api.patch(`/api/reports/${id}`, updates);
+        },
+        onSuccess: () => queryClient.invalidateQueries(['reports']),
+    });
 
-    const handleOpenConfirm = (id) => {
-        setReportIdToArchive(id);
-        setConfirmOpen(true);
-    };
-
-    const handleCloseConfirm = () => {
-        setConfirmOpen(false);
-        setReportIdToArchive(null);
-    };
-
+    const handleSearch = (event) => setSearchTerm(event.target.value.toLowerCase());
+    
     const handleUpdateStatus = (id, newStatus) => {
         updateReportMutation.mutate({ id, updates: { status: newStatus } });
         if (selectedReport?._id === id) {
@@ -72,32 +61,23 @@ const AdminPage = () => {
         }
     };
 
-    const handleConfirmArchive = () => {
-        updateReportMutation.mutate({ id: reportIdToArchive, updates: { status: 'ארכיון' } });
-        handleCloseConfirm();
-    };
     const handleOpenModal = (report) => {
         setSelectedReport(report);
         setIsModalOpen(true);
-
-        if (!report.isViewed) {
-            updateReportMutation.mutate({ 
-                id: report._id, 
-                updates: { isViewed: true } 
-            });
-        }
+        if (!report.isViewed) updateReportMutation.mutate({ id: report._id, updates: { isViewed: true } });
     };
 
-    const handleCloseModal = () => {
-        setIsModalOpen(false);
-        setSelectedReport(null);
-    };
+    const rawReports = cloudReports || []; 
 
     const reportsToShow = rawReports.filter(report => {
         const searchLower = searchTerm.toLowerCase();
+        const subjectHebrew = subjectTranslations[report.subject] || report.subject || '';
+        
         const matchesSearch = 
-            (report.trackingCode?.toLowerCase().includes(searchLower) || false) || 
-            (report.subject?.toLowerCase().includes(searchLower) || false);
+            (report.trackingCode?.toLowerCase().includes(searchLower)) ||
+            (subjectHebrew.toLowerCase().includes(searchLower)) ||
+            (report.description?.toLowerCase().includes(searchLower)) ||
+            (report.location?.toLowerCase().includes(searchLower));
 
         const matchesStatus = activeFilter === 'all' ? true : report.status === activeFilter;
         const isArchiveView = showArchive ? report.status === 'ארכיון' : report.status !== 'ארכיון';
@@ -106,134 +86,75 @@ const AdminPage = () => {
     });
 
     const activeReports = rawReports.filter(r => r.status !== 'ארכיון');
-    const newCount = activeReports.filter(r => r.status === 'חדש').length; 
-    const urgentCount = activeReports.filter(r => r.status === 'קריטי').length; 
-    const inProcessCount = activeReports.filter(r => r.status === 'בטיפול').length;
 
-    if (isLoading) {
-        return (
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', flexDirection: 'column' }}>
-                <CircularProgress color="inherit" />
-                <p style={{ marginTop: '20px', fontSize: '1.2rem' }}>טוען נתונים, נא להמתין...</p>
-            </Box>
-        );
-    }
-
-    if (isError) {
-        return (
-            <div style={{ textAlign: 'center', marginTop: '100px' }}>
-                <h2>חלה שגיאה בטעינת הדיווחים</h2>
-                <p>אנא ודאי שחיבור האינטרנט תקין ונסי לרענן את הדף.</p>
-                <Button variant="contained" onClick={() => window.location.reload()} sx={{ mt: 2, backgroundColor: 'black' }}>
-                    רענון דף
-                </Button>
-            </div>
-        );
-    }
+    if (isLoading) return <Box sx={{ display: 'flex', justifyContent: 'center', mt: 10 }}><CircularProgress /></Box>;
+    if (isError) return <Typography color="error" align="center" sx={{ mt: 5 }}>שגיאה בחיבור לשרת</Typography>;
 
     return (
-        <div className={styles.adminContainer}>
-            <div className={styles.headerRow}>
+        <Box sx={{ bgcolor: '#f4f7f9', minHeight: '100vh', p: 4 }} dir="rtl">
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+                <Box>
+                    <Typography variant="h4" sx={{ fontWeight: 'bold' }}>לוח ניהול דיווחים</Typography>
+                </Box>
                 <LogoutButton />
-                <h1>מערכת ניהול דיווחים</h1>
-                <div style={{width: '100px'}}></div>
-            </div>
-      
-            <div className={styles.statsRow}>
-                <StatCard label="דיווחים חדשים:" count={newCount} type="new" />
-                <StatCard label="מקרים דחופים:" count={urgentCount} type="urgent" />
-                <StatCard label='סה"כ בטיפול:' count={inProcessCount} type="process" />
-            </div>
+            </Box>
 
-            <div className={styles.actionsBar}>
-                <FiSearch className={styles.searchIcon} />
-                <input 
-                    type="text"
-                    placeholder="חפש לפי קוד או מילה:"
-                    className={styles.searchInput}
-                    onChange={handleSearch}
-                />
-                
-                <div className={styles.filterButtons}>
-                    <Button 
-                        variant={activeFilter === 'all' && !showArchive ? "contained" : "outlined"}
-                        onClick={() => filterReports('all')}
-                        sx={{ 
-                            color: activeFilter === 'all' && !showArchive ? 'white' : 'black', 
-                            borderColor: 'black',
-                            backgroundColor: activeFilter === 'all' && !showArchive ? 'black' : 'transparent',
-                            '&:hover': { backgroundColor: 'black', color: 'white', borderColor: 'black' },
-                            marginLeft: '8px'
-                        }}
-                    >
-                        הצג הכל
-                    </Button>
-                    <Button 
-                        variant={activeFilter === 'בטיפול' && !showArchive ? "contained" : "outlined"}
-                        onClick={() => filterReports('בטיפול')}
-                        sx={{ 
-                            color: activeFilter === 'בטיפול' && !showArchive ? 'white' : 'black', 
-                            borderColor: 'black',
-                            backgroundColor: activeFilter === 'בטיפול' && !showArchive ? 'black' : 'transparent',
-                            '&:hover': { backgroundColor: 'black', color: 'white', borderColor: 'black' },
-                            marginLeft: '8px'
-                        }}
-                    >
-                        הצג רק בטיפול
-                    </Button>
-                    <Button 
-                        variant={activeFilter === 'קריטי' && !showArchive ? "contained" : "outlined"}
-                        onClick={() => filterReports('קריטי')}
-                        sx={{ 
-                            color: activeFilter === 'קריטי' && !showArchive ? 'white' : 'black', 
-                            borderColor: 'black',
-                            backgroundColor: activeFilter === 'קריטי' && !showArchive ? 'black' : 'transparent',
-                            '&:hover': { backgroundColor: 'black', color: 'white', borderColor: 'black' },
-                            marginLeft: '8px'
-                        }}
-                    >
-                        הצג רק דחופים
-                    </Button>
-                    <Button 
-                        variant={showArchive ? "contained" : "outlined"} 
-                        color="secondary" 
-                        startIcon={<InventoryIcon />} 
-                        onClick={() => setShowArchive(!showArchive)}
-                        sx={{ marginLeft: '20px', fontWeight: 'bold' }} 
-                    >
-                        {showArchive ? "חזור לדיווחים פעילים" : "צפה בארכיון"}
+            <Box sx={{ display: 'flex', gap: 2, mb: 4 }}>
+                <StatCard label='סה"כ דיווחים' count={activeReports.length} type="all" />
+                <StatCard label="חדשים" count={activeReports.filter(r => r.status === 'חדש').length} type="new" />
+                <StatCard label="בטיפול" count={activeReports.filter(r => r.status === 'בטיפול').length} type="process" />
+                <StatCard label="חומרה גבוהה" count={activeReports.filter(r => r.status === 'קריטי').length} type="urgent" />
+            </Box>
+
+            <Paper sx={{ p: 3, mb: 4, borderRadius: 3, boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
+                <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+                    <TextField 
+                        placeholder="חיפוש"
+                        size="small" sx={{ flexGrow: 1 }} 
+                        onChange={handleSearch}
+                        InputProps={{ startAdornment: <InputAdornment position="start"><FiSearch /></InputAdornment> }}
+                    />
+                    <FormControl size="small" sx={{ minWidth: 200 }}>
+                        <InputLabel>כל הסטטוסים</InputLabel>
+                        <Select value={activeFilter} label="כל הסטטוסים" onChange={(e) => setActiveFilter(e.target.value)}>
+                            <MenuItem value="all">כל הסטטוסים</MenuItem>
+                            <MenuItem value="חדש">חדשים</MenuItem>
+                            <MenuItem value="בטיפול">בטיפול</MenuItem>
+                            <MenuItem value="קריטי">קריטי</MenuItem>
+                            <MenuItem value="טופל">טופלו</MenuItem>
+                        </Select>
+                    </FormControl>
+                    <Button variant="outlined" color="inherit" startIcon={<InventoryIcon />} onClick={() => setShowArchive(!showArchive)}>
+                        {showArchive ? "חזור" : "ארכיון"}
                     </Button>
                     <ExportButton data={reportsToShow} />
-                </div>
-            </div>
+                </Box>
+            </Paper>
 
-            <ReportsTable 
-                reports={reportsToShow} 
-                onArchive={handleOpenConfirm} 
-                onView={handleOpenModal} 
-            />
+            <Box>
+                <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
+                    דיווחים 
+                    <Chip label={reportsToShow.length} size="small" sx={{ mr: 1, bgcolor: '#e2e8f0' }} />
+                </Typography>
+                <ReportsTable reports={reportsToShow} onArchive={(id) => { setReportIdToArchive(id); setConfirmOpen(true); }} onView={handleOpenModal} />
+            </Box>
 
             <ReportModal 
-                open={isModalOpen} 
-                report={selectedReport} 
-                onClose={handleCloseModal} 
+                open={isModalOpen} report={selectedReport} 
+                onClose={() => { setIsModalOpen(false); setSelectedReport(null); queryClient.invalidateQueries(['reports']); }} 
                 onUpdateStatus={handleUpdateStatus} 
             />
 
-            <Dialog open={confirmOpen} onClose={handleCloseConfirm} dir="rtl">
-                <DialogTitle>אישור העברה לארכיון</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        האם הטיפול בדיווח הסתיים ואת בטוחה שברצונך להעביר אותו לארכיון?
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions sx={{padding: '15px'}}>
-                    <Button onClick={handleCloseConfirm} color="primary" variant="outlined">ביטול</Button>
-                    <Button onClick={handleConfirmArchive} color="error" variant="contained">כן, העבר</Button>
+            <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)} dir="rtl">
+                <DialogTitle>העברה לארכיון</DialogTitle>
+                <DialogContent><DialogContentText>האם את בטוחה שברצונך להעביר את הדיווח לארכיון?</DialogContentText></DialogContent>
+                <DialogActions sx={{ p: 3 }}>
+                    <Button onClick={() => setConfirmOpen(false)}>ביטול</Button>
+                    <Button onClick={() => { updateReportMutation.mutate({ id: reportIdToArchive, updates: { status: 'ארכיון' } }); setConfirmOpen(false); }} color="error" variant="contained">כן, העבר</Button>
                 </DialogActions>
             </Dialog>
-        </div>
+        </Box>
     );
-}
+};
 
 export default AdminPage;
