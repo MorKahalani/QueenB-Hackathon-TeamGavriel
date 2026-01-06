@@ -1,0 +1,55 @@
+/* Layout.module.css */
+
+.wrapper {
+    width: 100%;
+    min-height: 100vh;
+    display: block; 
+}
+
+.header {
+    width: 100%;
+    /* הגדלנו ל-90px כי הלוגו שלך הוא 62px - זה נותן לו אוויר */
+    height: 90px; 
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; 
+    padding: 0 40px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    
+    /* שינוי כאן: relative במקום sticky יגרום לו להיעלם בגלילה */
+    position: relative; 
+    
+    top: 0;
+    z-index: 1000;
+    box-sizing: border-box;
+    direction: ltr; 
+}
+
+.logoArea {
+    display: flex;
+    align-items: center;
+    /* מונע מהלוגו להידחס */
+    flex-shrink: 0; 
+}
+
+.logo {
+    height: 62px !important; 
+    width: auto;
+    object-fit: contain;
+}
+
+.actionsArea {
+    display: flex;
+    align-items: center;
+    /* מונע מכפתור היציאה להידחק אל מחוץ למסך */
+    flex-shrink: 0; 
+    min-width: fit-content;
+}
+
+.content {
+    width: 100%;
+    padding: 20px; 
+    box-sizing: border-box;
+    direction: rtl; 
+}
