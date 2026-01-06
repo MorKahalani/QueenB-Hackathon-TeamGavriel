@@ -6,6 +6,7 @@ import cors from 'cors';
 import rubberDuckRoutes from './routes/rubberDucks.js'; // Import the routes
 import mongoose from 'mongoose';
 import reportRoutes from './routes/reportRoutes.js';
+import authRoutes from './routes/auth.js';
 
 dotenv.config();
 
@@ -57,6 +58,7 @@ mongoose.connect(process.env.MONGO_URI)
   });
 
 app.use('/api/reports', reportRoutes)
+app.use('/api/auth', authRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

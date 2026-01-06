@@ -3,8 +3,7 @@ import OpenAI from 'openai';
 
 export const createReport = async (req, res) => {
   try {
-    const { subject, involvedPeople, description, location } = req.body;
-
+    const { subject, involvedPeople, description, location, teacherId, schoolId } = req.body;
     let filePaths = [];
     if (req.files && req.files.length > 0) {
       filePaths = req.files.map(file => `/uploads/${file.filename}`);
@@ -51,7 +50,9 @@ export const createReport = async (req, res) => {
       trackingCode,
       status: autoStatus,
       analysis: aiAnalysis,
-      files: filePaths
+      files: filePaths,
+      teacherId,
+      schoolId
     });
 
     const savedReport = await newReport.save();
@@ -64,7 +65,10 @@ export const createReport = async (req, res) => {
 
 export const getAllReports = async (req, res) => {
   try {
-    const reports = await Report.find();
+    const reports = await Report.find({ 
+        teacherId: req.user.id,
+        schoolId: req.user.schoolId 
+    });
 
     reports.sort((a, b) => {
       const aCriticalNew = (a.status === 'קריטי' && !a.isViewed);

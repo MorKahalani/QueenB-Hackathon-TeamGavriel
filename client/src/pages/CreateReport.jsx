@@ -2,11 +2,14 @@ import styles from '../styles/App.module.css';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShieldAlert, Users, Zap, MessageCircle, Lock, ImagePlay, Paperclip } from 'lucide-react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useParams } from 'react-router-dom';
 import api from '../services/api';
+import toast from 'react-hot-toast';
 
 function CreateReport() {
-    
+    // get schoolId from URL parameters
+    const { schoolId } = useParams();
     const navigate = useNavigate(); // navigate function to redirect after submission
     const queryClient = useQueryClient(); // for invalidating queries after mutation
 
@@ -17,6 +20,17 @@ function CreateReport() {
     const [description, setDescription] = useState('');
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [location, setLocation] = useState('');
+    const [selectedTeacher, setSelectedTeacher] = useState('');
+
+    // Fetch teachers for the given schoolId
+    const { data: teachers } = useQuery({
+        queryKey: ['teachers', schoolId],
+        queryFn: async () => {
+            const response = await api.get(`/api/auth/teachers/${schoolId}`);
+            return response.data;
+        },
+        enabled: !!schoolId // ירוץ רק אם יש schoolId בכתובת
+    });
 
     // Mutation for creating a report - sends form data to the server
     const mutation = useMutation({
@@ -40,34 +54,53 @@ function CreateReport() {
 
     // form submission handler
     const handleSubmit = async (e) => {
-    e.preventDefault(); // prevents default form submission behavior
-    setErrors({}); // resets previous errors
-    let newErrors = {};
+        e.preventDefault(); // prevents default form submission behavior
+        setErrors({}); // resets previous errors
+        let newErrors = {};
 
-    // basic validation
-    if (!selectedSubject) newErrors.subject = "חובה לבחור נושא";
-    if (!description) newErrors.description = "חובה להוסיף תיאור";
+        // basic validation
+        let missing = [];
 
-    // if there are validation errors, set them and stop submission
-    if (Object.keys(newErrors).length > 0) {
-        setErrors(newErrors);
-        return; 
+    if (!selectedSubject) missing.push("נושא");
+    if (!selectedTeacher) missing.push("מורה");
+    if (!description) missing.push("תיאור");
+
+    if (missing.length > 0) {
+        toast.error(`חסר מידע בשדות: ${missing.join(', ')}`, {
+            style: { border: '1px solid #ff4b4b', padding: '16px', fontWeight: 'bold' }
+        });
+        
+        // כאן נעדכן את ה-State של ה-errors כדי לצבוע את השדות
+        setErrors({
+            subject: !selectedSubject,
+            teacher: !selectedTeacher,
+            description: !description
+        });
+        return;
     }
 
-    // creating form data to send, including files
-    const formData = new FormData();
-    formData.append('subject', selectedSubject);
-    formData.append('location', location);
-    formData.append('description', description);
-    formData.append('involvedPeople', involvedPeople || '');
+        // if there are validation errors, set them and stop submission
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return; 
+        }
 
-    // appending selected files to form data
-    if (selectedFiles && selectedFiles.length > 0) {
-    // Array.from הופך את ה-FileList למערך רגיל שאפשר לעבור עליו
-    Array.from(selectedFiles).forEach(file => {
-        formData.append('files', file);
-    });
-}
+        // creating form data to send, including files
+        const formData = new FormData();
+        formData.append('subject', selectedSubject);
+        formData.append('location', location);
+        formData.append('description', description);
+        formData.append('involvedPeople', involvedPeople || '');
+        formData.append('teacherId', selectedTeacher); // שליחת ה-ID של המורה שנבחרה
+        formData.append('schoolId', schoolId); // שליחת ה-ID של בית הספר
+
+        // appending selected files to form data
+        if (selectedFiles && selectedFiles.length > 0) {
+        // Array.from הופך את ה-FileList למערך רגיל שאפשר לעבור עליו
+        Array.from(selectedFiles).forEach(file => {
+            formData.append('files', file);
+        });
+    }
 
     try {
         await mutation.mutateAsync(formData); // triggers the mutation to submit the form data
@@ -137,8 +170,27 @@ function CreateReport() {
             </div>
             {errors.subject && <p style={{ color: 'red', textAlign: 'center', fontWeight: 'bold', marginTop: '10px' }}>{errors.subject}</p>}
 
-            <form className={styles.reportForm} onSubmit={handleSubmit}>
+            <form className={styles.reportForm} onSubmit={handleSubmit} noValidate>
                 <h2 className={styles.formSubtitle}>פרטי הדיווח</h2>
+                
+                <div className={styles.fieldGroup}>
+                    <label htmlFor="teacherSelect">לאיזו מורה להפנות את הדיווח? *</label>
+                    <select 
+                        id="teacherSelect"
+                        value={selectedTeacher}
+                        onChange={(e) => setSelectedTeacher(e.target.value)}
+                        className={`${styles.inputField} ${errors.teacher ? styles.errorBorder : ''}`}
+                        required
+                    >
+                        <option value="">בחר/י מורה מהרשימה...</option>
+                        {teachers?.map(teacher => (
+                            <option key={teacher._id} value={teacher._id}>
+                                {teacher.name}
+                            </option>
+                        ))}
+                    </select>
+                    {errors.teacher && <p style={{ color: 'red', fontSize: '0.85rem' }}>{errors.teacher}</p>}
+                </div>
 
                 <div className={styles.fieldGroup}>
                 <label htmlFor="involvedPeople">מי המעורבים? </label>
@@ -170,7 +222,7 @@ function CreateReport() {
                 id="eventDescription" 
                 placeholder="תאר בפירוט מה קרה, היכן ומתי. שים לב, מידע מפורט יסייע למורה לטפל בדיווח שלך..." 
                 rows = "4"
-                className={styles.textareaField}
+                className={`${styles.textareaField} ${errors.description ? styles.errorBorder : ''}`}
                 />
                 {errors.description && <p style={{ color: 'red', fontSize: '0.85rem' }}>{errors.description}</p>}
                 </div>

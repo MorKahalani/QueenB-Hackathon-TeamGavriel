@@ -25,14 +25,14 @@ const StudentConfirmationPage = () => {
                 explanation="יש לשמור את הקוד כדי לצפות בתשובת המורה בהמשך"
                 />
                 <br />
-                <Button 
+                {/* <Button 
                     variant="contained" 
                     size="large"
                     onClick={() => navigate('/report')}
                     sx={{ backgroundColor: '#000', '&:hover': { backgroundColor: '#333' } }}
                 >
                    לדיווח נוסף
-                </Button>
+                </Button> */}
             </Paper>
         </Container>
     );
