@@ -21,6 +21,11 @@ function CreateReport() {
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [location, setLocation] = useState('');
     const [selectedTeacher, setSelectedTeacher] = useState('');
+        // AI assistant state (student side)
+    const [aiLoading, setAiLoading] = useState(false);
+    const [aiError, setAiError] = useState('');
+    const [aiResult, setAiResult] = useState(null);
+
 
     // Fetch teachers for the given schoolId
     const { data: teachers } = useQuery({
@@ -108,6 +113,29 @@ function CreateReport() {
         console.error("Submission error:", err);
     }
 };
+
+    const handleAiAssist = async () => {
+        setAiError('');
+        setAiResult(null);
+
+        const text = (description || '').trim();
+        if (!text) {
+            toast.error("כדי להשתמש בעזרה בניסוח, קודם כתבי תיאור אירוע.");
+            return;
+        }
+
+        setAiLoading(true);
+        try {
+            const response = await api.post('/api/ai/student-assist', { text });
+            setAiResult(response.data);
+        } catch (err) {
+            console.error("AI error:", err);
+            setAiError("ה-AI לא זמין כרגע. נסי שוב בעוד רגע.");
+        } finally {
+            setAiLoading(false);
+        }
+    };
+
 
 
     // predefined subjects with icons and colors
@@ -214,17 +242,95 @@ function CreateReport() {
                     className={styles.inputField}
                 />
                 </div>
-                <div className={styles.fieldGroup}>
+               <div className={styles.fieldGroup}>
                 <label htmlFor="eventDescription"> תיאור האירוע </label>
                 <textarea 
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                id="eventDescription" 
-                placeholder="תאר בפירוט מה קרה, היכן ומתי. שים לב, מידע מפורט יסייע למורה לטפל בדיווח שלך..." 
-                rows = "4"
-                className={`${styles.textareaField} ${errors.description ? styles.errorBorder : ''}`}
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    id="eventDescription" 
+                    placeholder="תאר בפירוט מה קרה, היכן ומתי. שים לב, מידע מפורט יסייע למורה לטפל בדיווח שלך..." 
+                    rows="4"
+                    className={`${styles.textareaField} ${errors.description ? styles.errorBorder : ''}`}
                 />
                 {errors.description && <p style={{ color: 'red', fontSize: '0.85rem' }}>{errors.description}</p>}
+
+                {/* AI assist button */}
+                <div style={{ marginTop: '10px', display: 'flex', gap: '10px', alignItems: 'center' }}>
+                    <button
+                    type="button"
+                    onClick={handleAiAssist}
+                    disabled={aiLoading || !description.trim()}
+                    className={styles.submitBtn}
+                    style={{ width: 'auto', padding: '10px 14px' }}
+                    title="ניסוח מחדש + בדיקת דחיפות"
+                    >
+                    {aiLoading ? "בודק..." : "לחץ עליי לעזרה בניסוח"}
+                    </button>
+
+                </div>
+
+                {/* AI error */}
+                {aiError && (
+                    <p style={{ color: 'red', fontWeight: 'bold', marginTop: '8px' }}>
+                    {aiError}
+                    </p>
+                )}
+
+                {/* AI result */}
+                {aiResult && (
+                    <div style={{ marginTop: '12px', padding: '12px', border: '1px solid #ddd', borderRadius: '10px' }}>
+                    
+                    {/* Risk banner */}
+                    {aiResult?.risk?.level === 'high' && (
+                        <div style={{ padding: '12px', border: '1px solid #ff4b4b', borderRadius: '10px', marginBottom: '12px' }}>
+                        <div style={{ fontWeight: 'bold', marginBottom: '6px' }}>נראה שזה דחוף</div>
+                        <div style={{ marginBottom: '8px' }}>{aiResult.student_message}</div>
+
+                        {Array.isArray(aiResult.suggested_actions) && aiResult.suggested_actions.length > 0 && (
+                            <ul style={{ margin: 0, paddingInlineStart: '18px' }}>
+                            {aiResult.suggested_actions.map((a, idx) => (
+                                <li key={idx}>
+                                {a.value ? `${a.label} (${a.value})` : a.label}
+                                </li>
+                            ))}
+                            </ul>
+                        )}
+                        </div>
+                    )}
+
+                    {/* Rewrite */}
+                    <div style={{ fontWeight: 'bold', marginBottom: '6px' }}>ניסוח מוצע</div>
+                    <textarea
+                        value={aiResult.rewrite || ""}
+                        readOnly
+                        rows="4"
+                        className={styles.textareaField}
+                    />
+
+                    <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+                        <button
+                        type="button"
+                        className={styles.submitBtn}
+                        style={{ width: 'auto', padding: '10px 14px' }}
+                        onClick={() => setDescription(aiResult.rewrite || description)}
+                        >
+                        החלף לטקסט הזה
+                        </button>
+
+                        <button
+                        type="button"
+                        className={styles.submitBtn}
+                        style={{ width: 'auto', padding: '10px 14px', opacity: 0.85 }}
+                        onClick={() => setAiResult(null)}
+                        >
+                        סגור
+                        </button>
+                    </div>
+
+                    {/* Optional: show reason in dev */}
+                    {/* <pre>{JSON.stringify(aiResult, null, 2)}</pre> */}
+                    </div>
+                )}
                 </div>
                 {/* File Upload Section */}
                 <div className={styles.fieldGroup}>

@@ -9,6 +9,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'; // ח�
 import Layout from './components/Layout/Layout';
 import { Toaster } from 'react-hot-toast';
 
+
+
+
 const queryClient = new QueryClient();  // חדש-יצרנו מנהל חדש
 
 function App() {
