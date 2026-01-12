@@ -12,9 +12,9 @@ const navigate = useNavigate();
 const handleLogout = () => {
     localStorage.removeItem('token');
     queryClient.clear();
-    toast.success("התנתקת בהצלחה. להתראות!", {
+    toast.success("התנתקת בהצלחה, להתראות", {
         duration: 2000,
-        icon: '👋',
+        
         style: {
             borderRadius: '10px',
             background: '#333',
@@ -24,7 +24,7 @@ const handleLogout = () => {
 
     setTimeout(() => {
         navigate('/'); 
-    }, 1500);
+    }, 2000);
 
     console.log("Logout completed: Token removed, Cache cleared, Redirected to Home.");
 };

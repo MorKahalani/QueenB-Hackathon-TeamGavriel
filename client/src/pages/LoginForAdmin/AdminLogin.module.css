@@ -63,7 +63,7 @@
 
 .loginCard button[type="submit"] {
     padding: 15px;
-    background-color: #3498db; 
+    background-color: #708ee0fd; 
     color: white;
     border: none;
     border-radius: 10px;
@@ -74,7 +74,7 @@
 }
 
 .loginCard button[type="submit"]:hover {
-    background-color: #27ae60;
+    background-color: #95aae4;
 }
 
 

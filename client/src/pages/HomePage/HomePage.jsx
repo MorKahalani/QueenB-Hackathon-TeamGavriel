@@ -1,6 +1,6 @@
 import styles from './Home.module.css';
 import { useNavigate } from 'react-router-dom';
-import { FiShield, FiUsers, FiLock, FiLayout } from "react-icons/fi"; 
+import { FiShield, FiUsers, FiLock } from "react-icons/fi"; 
 import { useEffect } from 'react';
 
 const Home = () => {
@@ -17,7 +17,7 @@ const Home = () => {
   return (
     <div className={styles.home}>
       <header className={styles.heroSection}>
-        <h1 className={styles.headline}>SafeSpace - מערכת ניהול דיווחים לצוות החינוכי</h1>
+        <h1 className={styles.headline}> מערכת ניהול דיווחים לצוות החינוכי</h1>
         <p className={styles.subline}>המרחב הבטוח שלך לניהול, מעקב וטיפול בדיווחי תלמידים באופן דיסקרטי.</p>
       </header>
     
@@ -43,7 +43,7 @@ const Home = () => {
         </div>
       </div>
 
-      <div className={styles.selectionContainer}>
+      {/* <div className={styles.selectionContainer}>
         <div className={styles.centerAction}>
           {isLoggedIn ? (
             <div className={styles.roleCard} onClick={() => navigate('/admin')}>
@@ -61,7 +61,7 @@ const Home = () => {
             </div>
           )}
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

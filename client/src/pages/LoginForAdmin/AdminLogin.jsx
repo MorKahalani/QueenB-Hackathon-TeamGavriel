@@ -20,7 +20,7 @@ const LoginPage = () => {
       // 2. שמירת הטוקן ב-localStorage של הדפדפן
       localStorage.setItem('token', response.data.token);
 
-      toast.success('התחברת בהצלחה! מעביר אותך ללוח הבקרה');
+      toast.success('התחברת בהצלחה למערכת');
       
       // 3. ניתוב לדף הדיווחים
       navigate('/admin'); 
