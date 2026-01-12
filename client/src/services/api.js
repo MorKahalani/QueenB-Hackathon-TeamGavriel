@@ -18,9 +18,8 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// --- זה החלק החדש שאת מוסיפה עכשיו (הטיפול בשגיאות) ---
 axiosInstance.interceptors.response.use(
-  (response) => response, // אם הכל טוב, אל תעשה כלום
+  (response) => response, 
   (error) => {
     // אם חזרה שגיאת 401 (אין הרשאה/טוקן פג תוקף)
     if (error.response && error.response.status === 401) {

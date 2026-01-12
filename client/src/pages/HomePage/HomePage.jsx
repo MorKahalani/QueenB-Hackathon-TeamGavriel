@@ -1,13 +1,18 @@
 import styles from './Home.module.css';
 import { useNavigate } from 'react-router-dom';
-// הוסיפי את FiLayout לייבוא כאן
 import { FiShield, FiUsers, FiLock, FiLayout } from "react-icons/fi"; 
+import { useEffect } from 'react';
 
 const Home = () => {
   const navigate = useNavigate();
 
   // חובה להגדיר את המשתנה לפני שמשתמשים בו
   const isLoggedIn = !!localStorage.getItem('token');
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate('/admin'); // אם היא מחוברת, "תקפיץ" אותה ישר לניהול
+    }
+  }, [isLoggedIn, navigate]);
 
   return (
     <div className={styles.home}>
