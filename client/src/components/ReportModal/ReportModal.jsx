@@ -16,7 +16,6 @@ const subjectTranslations = {
 const ReportModal = ({ open, report, onClose, onUpdateStatus }) => {
   if (!report) return null;
 
-  const isArchived = report.status === 'ארכיון';
 
   return (
     <Dialog 
@@ -110,26 +109,37 @@ const ReportModal = ({ open, report, onClose, onUpdateStatus }) => {
         )}
       </DialogContent>
 
-      <DialogActions sx={{ p: 3, bgcolor: '#fcfcfc', borderTop: '1px solid #eee', justifyContent: 'space-between' }}>
-        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-          {!isArchived ? (
-            <>
-              <Button size="small" variant={report.status === 'בטיפול' ? 'contained' : 'outlined'} color="primary" onClick={() => onUpdateStatus(report._id, 'בטיפול')} sx={{ borderRadius: 2 }}>
-                בטיפול
-              </Button>
-              <Button size="small" variant={report.status === 'קריטי' ? 'contained' : 'outlined'} color="error" onClick={() => onUpdateStatus(report._id, 'קריטי')} sx={{ borderRadius: 2 }}>
-                קריטי
-              </Button>
-              <Button size="small" variant={report.status === 'טופל' ? 'contained' : 'outlined'} color="success" onClick={() => onUpdateStatus(report._id, 'טופל')} sx={{ borderRadius: 2 }}>
-                טופל
-              </Button>
-            </>
-          ) : (
-            <Typography variant="caption" color="textSecondary">דיווח זה הועבר לארכיון</Typography>
-          )}
-        </Box>
-        <Button onClick={onClose} variant="text" sx={{ fontWeight: 'bold', color: '#718096' }}>סגירה</Button>
-      </DialogActions>
+      <DialogActions sx={{ p: 3, justifyContent: 'space-between' }}>
+  {/* אם הדיווח בטיפול/חדש - מציגים רק 2 כפתורי ניהול */}
+  {report.status !== 'ארכיון' ? (
+    <Box>
+      <Button 
+        variant={report.status==='קריטי' ? 'contained' : 'outlined'} 
+        color="error" 
+        onClick={() => onUpdateStatus(report._id, 'קריטי')}
+        sx={{ ml: 1 }}
+      >
+        קריטי
+      </Button>
+      <Button 
+        variant={report.status==='בטיפול' ? 'contained' : 'outlined'} 
+        color="primary" 
+        onClick={() => onUpdateStatus(report._id, 'בטיפול')}
+      >
+        בטיפול
+      </Button>
+    </Box>
+  ) : (
+    /* אם הדיווח כבר ב"טופלו" - רק כיתוב ברור */
+    <Typography variant="h6" sx={{ color: 'success.main', fontWeight: 'bold' }}>
+      ✓ דיווח זה טופל בהצלחה
+    </Typography>
+  )}
+
+  <Button onClick={onClose} variant="outlined" color="inherit">
+    סגור
+  </Button>
+</DialogActions>
     </Dialog>
   );
 };

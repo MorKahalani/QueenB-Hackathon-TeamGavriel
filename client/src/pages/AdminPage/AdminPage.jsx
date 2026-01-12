@@ -1,17 +1,16 @@
-//import LogoutButton from '../../components/LogoutButton/LogoutButton';
 import ExportButton from '../../components/ExportButton/ExportButton';
 import ReportsTable from '../../components/ReportsTable/ReportsTable';
 import StatCard from '../../components/StatCard/StatCard';
 import { useState } from 'react'; 
 import { FiSearch } from "react-icons/fi"; 
-import InventoryIcon from '@mui/icons-material/Inventory';
+import TaskAltIcon from '@mui/icons-material/TaskAlt'; 
 import ReportModal from '../../components/ReportModal/ReportModal';
 import { 
   Button, Dialog, DialogActions, DialogContent, DialogContentText, 
   DialogTitle, Box, CircularProgress, Typography, Paper, 
   FormControl, InputLabel, Select, MenuItem, TextField, InputAdornment, Chip 
 } from '@mui/material';
-import { useQuery , useMutation, useQueryClient } from '@tanstack/react-query'; 
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'; 
 import api from '../../services/api'; 
 
 const subjectTranslations = {
@@ -93,14 +92,11 @@ const AdminPage = () => {
     return (
         <Box sx={{ bgcolor: '#f4f7f9', minHeight: '100vh', p: 4 }} dir="rtl">
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-                <Box>
-                    <Typography variant="h4" sx={{ fontWeight: 'bold' }}>לוח ניהול דיווחים</Typography>
-                </Box>
-                {/* <LogoutButton /> */}
+                <Typography variant="h4" sx={{ fontWeight: 'bold' }}>לוח ניהול דיווחים</Typography>
             </Box>
 
             <Box sx={{ display: 'flex', gap: 2, mb: 4 }}>
-                <StatCard label='סה"כ דיווחים' count={activeReports.length} type="all" />
+                <StatCard label='סה"כ דיווחים פעילים' count={activeReports.length} type="all" />
                 <StatCard label="חדשים" count={activeReports.filter(r => r.status === 'חדש').length} type="new" />
                 <StatCard label="בטיפול" count={activeReports.filter(r => r.status === 'בטיפול').length} type="process" />
                 <StatCard label="קריטיים" count={activeReports.filter(r => r.status === 'קריטי').length} type="urgent" />
@@ -115,33 +111,26 @@ const AdminPage = () => {
                         InputProps={{ startAdornment: <InputAdornment position="start"><FiSearch /></InputAdornment> }}
                     />
                     <FormControl size="small" sx={{ minWidth: 200 }}>
-                        <InputLabel>כל הסטטוסים</InputLabel>
-                        <Select value={activeFilter} label="כל הסטטוסים" onChange={(e) => setActiveFilter(e.target.value)}>
+                        <InputLabel>פילטר סטטוס</InputLabel>
+                        <Select value={activeFilter} label="פילטר סטטוס" onChange={(e) => setActiveFilter(e.target.value)}>
                             <MenuItem value="all">כל הסטטוסים</MenuItem>
                             <MenuItem value="חדש">חדשים</MenuItem>
                             <MenuItem value="בטיפול">בטיפול</MenuItem>
                             <MenuItem value="קריטי">קריטי</MenuItem>
-                            <MenuItem value="טופל">טופלו</MenuItem>
                         </Select>
                     </FormControl>
                     <Button 
                         variant="outlined" 
-                        color="inherit" 
+                        color={showArchive ? "primary" : "inherit"} 
                         onClick={() => setShowArchive(!showArchive)}
                         sx={{ 
-                            display: 'flex', 
-                            alignItems: 'center', 
-                            gap: 1.5,
-                            px: 3,
-                            py: 1,
-                            borderRadius: 2,
-                            borderColor: '#e2e8f0',
-                            '&:hover': { bgcolor: '#f8fafc' }
+                            display: 'flex', alignItems: 'center', gap: 1.5, px: 3, py: 1, borderRadius: 2,
+                            borderColor: showArchive ? 'primary.main' : '#e2e8f0'
                         }}
                     >
-                        <InventoryIcon sx={{ fontSize: 20 }} />
+                        <TaskAltIcon sx={{ fontSize: 20 }} />
                         <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                            {showArchive ? "חזור" : "ארכיון"}
+                            {showArchive ? "חזור לדיווחים פעילים" : "דיווחים שטופלו"}
                         </Typography>
                     </Button>
                     <ExportButton data={reportsToShow} />
@@ -150,10 +139,21 @@ const AdminPage = () => {
 
             <Box>
                 <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
-                    דיווחים 
+                    {showArchive ? "דיווחים שטופלו" : "דיווחים פעילים"} 
                     <Chip label={reportsToShow.length} size="small" sx={{ mr: 1, bgcolor: '#e2e8f0' }} />
                 </Typography>
-                <ReportsTable reports={reportsToShow} onArchive={(id) => { setReportIdToArchive(id); setConfirmOpen(true); }} onView={handleOpenModal} />
+                <ReportsTable 
+                    reports={reportsToShow} 
+                    onUpdateStatus={(id, newStatus) => {
+                        if (newStatus === 'ארכיון') {
+                            setReportIdToArchive(id);
+                            setConfirmOpen(true);
+                        } else {
+                            handleUpdateStatus(id, newStatus);
+                        }
+                    }} 
+                    onView={handleOpenModal} 
+                />
             </Box>
 
             <ReportModal 
@@ -163,11 +163,24 @@ const AdminPage = () => {
             />
 
             <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)} dir="rtl">
-                <DialogTitle>העברה לארכיון</DialogTitle>
-                <DialogContent><DialogContentText>האם את בטוחה שברצונך להעביר את הדיווח לארכיון?</DialogContentText></DialogContent>
+                <DialogTitle sx={{ fontWeight: 'bold' }}>סיום טיפול בדיווח</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        האם את בטוחה שסיימת לטפל בדיווח? הוא יעבור כעת לתיבת הדיווחים שטופלו.
+                    </DialogContentText>
+                </DialogContent>
                 <DialogActions sx={{ p: 3 }}>
-                    <Button onClick={() => setConfirmOpen(false)}>ביטול</Button>
-                    <Button onClick={() => { updateReportMutation.mutate({ id: reportIdToArchive, updates: { status: 'ארכיון' } }); setConfirmOpen(false); }} color="error" variant="contained">כן, העבר</Button>
+                    <Button onClick={() => setConfirmOpen(false)} color="inherit">ביטול</Button>
+                    <Button 
+                        onClick={() => { 
+                            handleUpdateStatus(reportIdToArchive, 'ארכיון'); 
+                            setConfirmOpen(false); 
+                        }} 
+                        color="success" 
+                        variant="contained"
+                    >
+                        כן, סיום טיפול
+                    </Button>
                 </DialogActions>
             </Dialog>
         </Box>

@@ -25,7 +25,7 @@ function Layout({ children }) {
         </div>
         
         <div className={styles.actionsArea}>
-          {isLoggedIn ? (
+          {(isLoggedIn && !isReportArea)  ? (
             /* אם המורה מחוברת - תמיד נציג כפתור יציאה */
             <LogoutButton />
           ) : (

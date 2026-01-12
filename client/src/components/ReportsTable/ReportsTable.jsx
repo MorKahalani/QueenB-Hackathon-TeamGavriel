@@ -1,24 +1,28 @@
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Chip, Button, Box, Typography } from '@mui/material';
-import PropTypes from 'prop-types'; 
-import InventoryIcon from '@mui/icons-material/Inventory';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Chip, Button, Box, Typography, IconButton, Tooltip } from '@mui/material';
+import PropTypes from 'prop-types';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import TaskAltIcon from '@mui/icons-material/TaskAlt'; // האייקון החדש והנקי
+import SettingsBackupRestoreIcon from '@mui/icons-material/SettingsBackupRestore';
 
 const subjectTranslations = {
   'self-harm': 'פגיעה עצמית',
   'bullying': 'בריונות או חרם',
-  'violence':'אלימות או איומים',
+  'violence': 'אלימות או איומים',
   'media': 'הפצת תמונות',
-  'other':'אחר'
+  'other': 'אחר'
 };
 
-const ReportsTable = ({ reports, onArchive, onView }) => {
+const ReportsTable = ({ reports, onUpdateStatus, onView }) => {
+  // הגנה מפני קריסה: אם reports הוא undefined, נשתמש במערך ריק
+  const safeReports = reports || [];
+
   return (
-    <TableContainer 
-      component={Paper} 
+    <TableContainer
+      component={Paper}
       elevation={0}
-      sx={{ 
-        borderRadius: 3, 
-        border: '1px solid #edf2f7', 
+      sx={{
+        borderRadius: 3,
+        border: '1px solid #edf2f7',
         boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
         overflow: 'hidden'
       }}
@@ -36,7 +40,7 @@ const ReportsTable = ({ reports, onArchive, onView }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {reports.length === 0 ? (
+          {safeReports.length === 0 ? (
             <TableRow>
               <TableCell colSpan={7} align="center" sx={{ py: 8 }}>
                 <Typography color="textSecondary" sx={{ fontStyle: 'italic' }}>
@@ -45,93 +49,98 @@ const ReportsTable = ({ reports, onArchive, onView }) => {
               </TableCell>
             </TableRow>
           ) : (
-          reports.map((report) => (
-            <TableRow 
-              key={report._id} 
-              hover 
-              sx={{ 
-                bgcolor: !report.isViewed ? '#fefce8 !important' : 'inherit',
-                transition: '0.2s',
-                '&:hover': { bgcolor: '#f1f5f9 !important' }
-              }}
-            > 
-              <TableCell align="right">
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  {!report.isViewed && (
-                    <Box sx={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#3182ce' }} />
-                  )}
-                  <Chip 
-                    label={report.status} 
-                    size="small"
-                    color={report.status === 'קריטי' ? 'error' : report.status === 'בטיפול' ? 'primary' : 'success'} 
-                    variant={!report.isViewed ? "filled" : "outlined"} 
-                    sx={{ fontWeight: 'bold', borderRadius: 1 }}
-                  />
-                </Box>
-              </TableCell>
-              <TableCell align="right">
-                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2d3748' }}>
-                  {report.trackingCode}
-                </Typography>
-              </TableCell> 
-              <TableCell align="right">
-                <Typography variant="body2">{subjectTranslations[report.subject] || report.subject}</Typography>
-              </TableCell>
-              <TableCell align="right">
-                {report.location ? (
-                  <Typography variant="body2">{report.location}</Typography>
-                ) : (
-                  <Typography variant="caption" sx={{ color: '#cbd5e0', fontStyle: 'italic' }}>לא צוין מיקום</Typography>
-                )}
-              </TableCell>
-              <TableCell align="right" sx={{ maxWidth: '220px' }}>
-                <Typography variant="body2" noWrap sx={{ color: '#4a5568' }}>
-                  {report.description}
-                </Typography>
-              </TableCell>
-              <TableCell align="right">
-                <Typography variant="body2" sx={{ color: '#718096' }}>
-                  {report.createdAt ? new Date(report.createdAt).toLocaleDateString('he-IL', {
-                    day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'
-                  }) : ''}
-                </Typography>
-              </TableCell>
-              <TableCell align="center">
-                <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}>
-                  <Button 
-                    variant="contained" 
-                    size="small" 
-                    startIcon={<VisibilityIcon sx={{ ml: 1 }} />}
-                    onClick={() => onView(report)}
-                    sx={{ 
-                      borderRadius: 1.5, 
-                      textTransform: 'none', 
-                      boxShadow: 'none',
-                      bgcolor: '#1a2038',
-                      px: 2,
-                      '&:hover': { bgcolor: '#2d3748', boxShadow: 'none' }
-                    }}
-                  >
-                    צפייה
-                  </Button>
-                  <Button 
-                    variant="outlined" 
-                    color="inherit" 
-                    onClick={() => onArchive(report._id)} 
-                    sx={{ 
-                      minWidth: 'auto', 
-                      p: 1, 
-                      borderRadius: 1.5, 
-                      borderColor: '#e2e8f0',
-                      '&:hover': { bgcolor: '#fff5f5', color: '#e53e3e', borderColor: '#feb2b2' }
-                    }}
-                  >
-                    <InventoryIcon fontSize="small" />
-                  </Button>
-                </Box>
-              </TableCell>
-            </TableRow>
-          ))
+            safeReports.map((report) => {
+              const isHandled = report.status === 'ארכיון';
+
+              return (
+                <TableRow
+                  key={report._id}
+                  hover
+                  sx={{
+                    bgcolor: !report.isViewed ? '#fefce8 !important' : 'inherit',
+                    transition: '0.2s',
+                    '&:hover': { bgcolor: '#f1f5f9 !important' }
+                  }}
+                >
+                  <TableCell align="right">
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      {!report.isViewed && (
+                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#3182ce' }} />
+                      )}
+                      <Chip
+                        label={report.status === 'ארכיון' ? 'טופל' : report.status}
+                        size="small"
+                        color={report.status === 'קריטי' ? 'error' : report.status === 'בטיפול' ? 'primary' : 'success'}
+                        variant={!report.isViewed ? "filled" : "outlined"}
+                        sx={{ fontWeight: 'bold', borderRadius: 1 }}
+                      />
+                    </Box>
+                  </TableCell>
+
+                  <TableCell align="right">
+                    <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2d3748' }}>{report.trackingCode}</Typography>
+                  </TableCell>
+                  <TableCell align="right">
+                    <Typography variant="body2">{subjectTranslations[report.subject] || report.subject}</Typography>
+                  </TableCell>
+                  <TableCell align="right">
+                    <Typography variant="body2">{report.location || "לא צוין מיקום"}</Typography>
+                  </TableCell>
+                  <TableCell align="right" sx={{ maxWidth: '220px' }}>
+                    <Typography variant="body2" noWrap sx={{ color: '#4a5568' }}>{report.description}</Typography>
+                  </TableCell>
+                  <TableCell align="right">
+                    <Typography variant="body2" sx={{ color: '#718096' }}>
+                      {new Date(report.createdAt).toLocaleDateString('he-IL', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}
+                    </Typography>
+                  </TableCell>
+
+                  <TableCell align="center">
+                    <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center', alignItems: 'center' }}>
+                      <Button
+                        variant="contained"
+                        size="small"
+                        startIcon={<VisibilityIcon sx={{ ml: 1 }} />}
+                        onClick={() => onView(report)}
+                        sx={{
+                          borderRadius: 1.5,
+                          bgcolor: '#1a2038',
+                          '&:hover': { bgcolor: '#2d3748' }
+                        }}
+                      >
+                        צפייה
+                      </Button>
+
+                      {isHandled ? (
+                        <Tooltip title="החזר לטיפול פעיל">
+                          <IconButton
+                            onClick={() => onUpdateStatus(report._id, 'בטיפול')}
+                            sx={{ color: '#3182ce', '&:hover': { bgcolor: '#ebf8ff' } }}
+                          >
+                            <SettingsBackupRestoreIcon />
+                          </IconButton>
+                        </Tooltip>
+                      ) : (
+                        <Tooltip title="סיום טיפול">
+                          <IconButton
+                            onClick={() => onUpdateStatus(report._id, 'ארכיון')}
+                            sx={{
+                              color: 'action.active', 
+                              '&:hover': {
+                                color: 'success.main', 
+                                bgcolor: '#f0fff4'    
+                              }
+                            }}
+                          >
+                            <TaskAltIcon /> 
+                          </IconButton>
+                        </Tooltip>
+                      )}
+                    </Box>
+                  </TableCell>
+                </TableRow>
+              );
+            })
           )}
         </TableBody>
       </Table>
@@ -140,8 +149,8 @@ const ReportsTable = ({ reports, onArchive, onView }) => {
 };
 
 ReportsTable.propTypes = {
-  reports: PropTypes.array.isRequired,
-  onArchive: PropTypes.func.isRequired,
+  reports: PropTypes.array,
+  onUpdateStatus: PropTypes.func.isRequired,
   onView: PropTypes.func.isRequired,
 };
 
