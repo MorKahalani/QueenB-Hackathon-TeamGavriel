@@ -11,6 +11,7 @@ const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    localStorage.removeItem('token');
     setIsLoading(true);
     try {
       // 1. קריאה ל-Backend לנתיב ה-Login שיצרנו
