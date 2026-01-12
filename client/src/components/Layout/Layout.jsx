@@ -89,15 +89,7 @@ function Layout({ children }) {
     <div className={styles.wrapper}>
       <header className={styles.header}>
         <div className={styles.logoArea}>
-          {isReportArea ? (
-    /* בדפי דיווח: הלוגו הוא תמונה בלבד ללא יכולת לחיצה */
-    <img src={logoImage} className={styles.logo} alt="SafeSpace" />
-  ) : (
-    /* בשאר הדפים: הלוגו הוא קישור פעיל לדף הבית */
-    <Link to="/" className={styles.logoLink}>
       <img src={logoImage} className={styles.logo} alt="SafeSpace" />
-    </Link>
-  )}
         </div>
         
         <div className={styles.actionsArea}>
