@@ -1,24 +1,33 @@
 import { FiLogOut } from "react-icons/fi"; 
 import './LogoutButton.css'; 
-//import { useNavigate } from 'react-router-dom'; // חסר לך!
+import { useNavigate } from 'react-router-dom'; 
 import toast from 'react-hot-toast';
+import { useQueryClient } from '@tanstack/react-query';
+
 
 const LogoutButton = () => {
-  const handleLogout = () => {
-    // 
-    localStorage.removeItem('token');
-    toast.success("התנתקת בהצלחה. להתראות!", {
-      duration: 3000, // משך הזמן שההודעה תישאר על המסך
-      icon: '👋'
-    });
-    setTimeout(() => {
-      window.location.href = '/'; 
-      // או navigate('/') אם את מעדיפה, אבל window.location מבטיח ניקוי מלא
-    }, 2000);
-    
-    console.log("הטוקן נמחק והמשתמש הועבר לדף הבית");
-  };
+const queryClient = useQueryClient();
+const navigate = useNavigate();
 
+const handleLogout = () => {
+    localStorage.removeItem('token');
+    queryClient.clear();
+    toast.success("התנתקת בהצלחה, להתראות", {
+        duration: 2000,
+        
+        style: {
+            borderRadius: '10px',
+            background: '#333',
+            color: '#fff',
+        },
+    });
+
+    setTimeout(() => {
+        navigate('/'); 
+    }, 2000);
+
+    console.log("Logout completed: Token removed, Cache cleared, Redirected to Home.");
+};
   return (
     <button className="logout-btn" onClick={handleLogout}>
       <span className="btn-text">יציאה</span>

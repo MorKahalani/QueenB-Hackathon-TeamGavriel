@@ -1,18 +1,23 @@
 import styles from './Home.module.css';
 import { useNavigate } from 'react-router-dom';
-// הוסיפי את FiLayout לייבוא כאן
-import { FiShield, FiUsers, FiLock, FiLayout } from "react-icons/fi"; 
+import { FiShield, FiUsers, FiLock } from "react-icons/fi"; 
+import { useEffect } from 'react';
 
 const Home = () => {
   const navigate = useNavigate();
 
   // חובה להגדיר את המשתנה לפני שמשתמשים בו
   const isLoggedIn = !!localStorage.getItem('token');
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate('/admin'); // אם היא מחוברת, "תקפיץ" אותה ישר לניהול
+    }
+  }, [isLoggedIn, navigate]);
 
   return (
     <div className={styles.home}>
       <header className={styles.heroSection}>
-        <h1 className={styles.headline}>SafeSpace - מערכת ניהול דיווחים לצוות החינוכי</h1>
+        <h1 className={styles.headline}> מערכת ניהול דיווחים לצוות החינוכי</h1>
         <p className={styles.subline}>המרחב הבטוח שלך לניהול, מעקב וטיפול בדיווחי תלמידים באופן דיסקרטי.</p>
       </header>
     
@@ -38,7 +43,7 @@ const Home = () => {
         </div>
       </div>
 
-      <div className={styles.selectionContainer}>
+      {/* <div className={styles.selectionContainer}>
         <div className={styles.centerAction}>
           {isLoggedIn ? (
             <div className={styles.roleCard} onClick={() => navigate('/admin')}>
@@ -56,7 +61,7 @@ const Home = () => {
             </div>
           )}
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

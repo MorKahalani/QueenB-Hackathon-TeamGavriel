@@ -19,9 +19,14 @@ const auth = (req, res, next) => {
     // 5. הכל תקין - ממשיכים לפונקציה הבאה (ה-Controller)
     next();
   } catch (err) {
-    console.error("Token verification failed:", err);
-    res.status(401).json({ msg: 'הטוקן אינו תקף' });
+  console.error("JWT Error:", err.message);
+  
+  // אם הטוקן פג תוקף, נחזיר 401 במקום לתת לשרת להשתגע
+  if (err.name === 'TokenExpiredError') {
+    return res.status(401).json({ msg: 'החיבור פג תוקף, אנא התחברי שנית' });
   }
+  
+  res.status(401).json({ msg: 'הטוקן אינו תקף' });
+}
 };
-
 export default auth;
