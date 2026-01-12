@@ -114,13 +114,13 @@ const ReportModal = ({ open, report, onClose, onUpdateStatus }) => {
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
           {!isArchived ? (
             <>
-              <Button size="small" variant="contained" color="primary" onClick={() => onUpdateStatus(report._id, 'בטיפול')} sx={{ borderRadius: 2 }}>
+              <Button size="small" variant={report.status === 'בטיפול' ? 'contained' : 'outlined'} color="primary" onClick={() => onUpdateStatus(report._id, 'בטיפול')} sx={{ borderRadius: 2 }}>
                 בטיפול
               </Button>
-              <Button size="small" variant="outlined" color="error" onClick={() => onUpdateStatus(report._id, 'קריטי')} sx={{ borderRadius: 2 }}>
+              <Button size="small" variant={report.status === 'קריטי' ? 'contained' : 'outlined'} color="error" onClick={() => onUpdateStatus(report._id, 'קריטי')} sx={{ borderRadius: 2 }}>
                 קריטי
               </Button>
-              <Button size="small" variant="outlined" color="success" onClick={() => onUpdateStatus(report._id, 'טופל')} sx={{ borderRadius: 2 }}>
+              <Button size="small" variant={report.status === 'טופל' ? 'contained' : 'outlined'} color="success" onClick={() => onUpdateStatus(report._id, 'טופל')} sx={{ borderRadius: 2 }}>
                 טופל
               </Button>
             </>
