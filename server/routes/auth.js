@@ -65,7 +65,7 @@ router.post('/login', async (req, res) => {
     jwt.sign(
       payload,
       process.env.JWT_SECRET || 'secretkey', // השתמשי במפתח סודי מה-env
-      { expiresIn: '24h' },
+      { expiresIn: '365d' },
       (err, token) => {
         if (err) throw err;
         res.json({ token }); // החזרת המפתח למורה
