@@ -103,7 +103,7 @@ const AdminPage = () => {
                 <StatCard label='סה"כ דיווחים' count={activeReports.length} type="all" />
                 <StatCard label="חדשים" count={activeReports.filter(r => r.status === 'חדש').length} type="new" />
                 <StatCard label="בטיפול" count={activeReports.filter(r => r.status === 'בטיפול').length} type="process" />
-                <StatCard label="חומרה גבוהה" count={activeReports.filter(r => r.status === 'קריטי').length} type="urgent" />
+                <StatCard label="קריטיים" count={activeReports.filter(r => r.status === 'קריטי').length} type="urgent" />
             </Box>
 
             <Paper sx={{ p: 3, mb: 4, borderRadius: 3, boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
