@@ -1,6 +1,6 @@
 import styles from './Home.module.css';
 import { useNavigate } from 'react-router-dom';
-import { FiShield, FiUsers, FiLock, FiLayout } from "react-icons/fi"; 
+import { FiShield, FiUsers, FiLock } from "react-icons/fi"; 
 import { useEffect } from 'react';
 
 const Home = () => {
