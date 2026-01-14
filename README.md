@@ -46,7 +46,6 @@ To run SafeSpace locally, follow these steps:
 
 ### 2. Getting Started
 Clone the repository:
-```bash
 git clone [https://github.com/your-username/SafeSpace.git](https://github.com/your-username/SafeSpace.git)
 cd SafeSpace
 3. Server Setup
