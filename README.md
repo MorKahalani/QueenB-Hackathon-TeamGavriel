@@ -16,8 +16,8 @@
 
 ### Video Demos
 Watch the system in action (Google Drive links):
-* [Student Reporting Demo] https://drive.google.com/file/d/1P9vIYEc99hmKLHF5X6EPKmKdy8Dke7VF/view
-* [Teacher Management Demo] https://drive.google.com/file/d/1QoCbdFQa1G7kfNY8eR3_C9k_jdqkour5/view
+* Student Reporting Demo -  https://drive.google.com/file/d/1P9vIYEc99hmKLHF5X6EPKmKdy8Dke7VF/view
+* Teacher Management Demo - https://drive.google.com/file/d/1QoCbdFQa1G7kfNY8eR3_C9k_jdqkour5/view
 
 ### Screenshots
 <div align="center">
