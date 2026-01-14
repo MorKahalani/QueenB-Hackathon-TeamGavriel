@@ -68,5 +68,5 @@ Start the frontend: npm run dev
 
 ⚠️ Note on AI Features: This project uses the OpenAI API for report analysis. If the API key is inactive, please refer to the Project Media section above to see the full AI flow in action in the demo videos.
 
-🚀 Impact & Recognition
+##🚀 Impact & Recognition
 Our team won 1st Place at the BeSafe Hackathon for this solution, recognized for its social impact, technical implementation, and user-centric design.
