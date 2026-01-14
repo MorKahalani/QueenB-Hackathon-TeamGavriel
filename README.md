@@ -15,9 +15,9 @@
 ## 📸 Project Media
 
 ### Video Demos
-Watch the system in action (click to open):
-* [Student Reporting Demo](demo/Demo-student.mp4)
-* [Teacher Management Demo](demo/Demo-Teacher.mp4)
+Watch the system in action (Google Drive links):
+* [Student Reporting Demo] https://drive.google.com/file/d/1P9vIYEc99hmKLHF5X6EPKmKdy8Dke7VF/view
+* [Teacher Management Demo] https://drive.google.com/file/d/1QoCbdFQa1G7kfNY8eR3_C9k_jdqkour5/view
 
 ### Screenshots
 <div align="center">
