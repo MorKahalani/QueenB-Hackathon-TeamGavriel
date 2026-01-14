@@ -6,7 +6,6 @@ const axiosInstance = axios.create({
   headers: { 'Content-Type': 'application/json' },
 });
 
-// זה ה-Interceptor שכבר יש לך (שמוסיף את הטוקן)
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
@@ -21,10 +20,9 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response, 
   (error) => {
-    // אם חזרה שגיאת 401 (אין הרשאה/טוקן פג תוקף)
     if (error.response && error.response.status === 401) {
-      localStorage.removeItem('token'); // מנקים את הטוקן התקול
-      window.location.href = '/login';   // שולחים ללוגין
+      localStorage.removeItem('token'); 
+      window.location.href = '/login';  
     }
     return Promise.reject(error);
   }

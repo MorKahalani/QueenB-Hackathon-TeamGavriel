@@ -1,7 +1,7 @@
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Chip, Button, Box, Typography, IconButton, Tooltip } from '@mui/material';
 import PropTypes from 'prop-types';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import TaskAltIcon from '@mui/icons-material/TaskAlt'; // האייקון החדש והנקי
+import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import SettingsBackupRestoreIcon from '@mui/icons-material/SettingsBackupRestore';
 
 const subjectTranslations = {
@@ -13,7 +13,6 @@ const subjectTranslations = {
 };
 
 const ReportsTable = ({ reports, onUpdateStatus, onView }) => {
-  // הגנה מפני קריסה: אם reports הוא undefined, נשתמש במערך ריק
   const safeReports = reports || [];
 
   return (

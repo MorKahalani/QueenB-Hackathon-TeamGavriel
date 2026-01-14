@@ -2,20 +2,15 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    
-    /* הגדרות למניעת גלילה */
-    height: 100vh; /* תופס בדיוק את גובה המסך */
-    width: 100vw;  /* תופס בדיוק את רוחב המסך */
-    position: fixed; /* מקבע את כל המסך למקום */
+    height: 100vh; 
+    width: 100vw;  
+    position: fixed; 
     top: 0;
     left: 0;
-    overflow: hidden; /* מבטל את אפשרות הגלילה לגמרי */
+    overflow: hidden; 
     
     background-color: #f5f6fa; 
     direction: rtl;
-
-    /* הגבהת הקוביה למעלה */
-    /* במקום למרכז בדיוק, נמשוך אותה למעלה בעזרת padding-bottom גדול */
     padding-bottom: 20vh; 
 }
 
@@ -30,8 +25,6 @@
     flex-direction: column;
     gap: 20px;
     text-align: center;
-    
-    /* מוודא שהכרטיס לא "יברח" יותר מדי למעלה במסכים קטנים */
     margin-top: auto; 
     margin-bottom: auto;
 }

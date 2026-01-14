@@ -8,12 +8,9 @@ import api from '../services/api';
 import toast from 'react-hot-toast';
 
 function CreateReport() {
-    // get schoolId from URL parameters
     const { schoolId } = useParams();
-    const navigate = useNavigate(); // navigate function to redirect after submission
-    const queryClient = useQueryClient(); // for invalidating queries after mutation
-
-    // data for creating a report
+    const navigate = useNavigate(); 
+    const queryClient = useQueryClient(); 
     const [errors, setErrors] = useState({});
     const [selectedSubject, setSelectedSubject] = useState('');
     const [involvedPeople, setInvolvedPeople] = useState('');
@@ -21,29 +18,24 @@ function CreateReport() {
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [location, setLocation] = useState('');
     const [selectedTeacher, setSelectedTeacher] = useState('');
-
-    // Fetch teachers for the given schoolId
     const { data: teachers } = useQuery({
         queryKey: ['teachers', schoolId],
         queryFn: async () => {
             const response = await api.get(`/api/auth/teachers/${schoolId}`);
             return response.data;
         },
-        enabled: !!schoolId // ירוץ רק אם יש schoolId בכתובת
+        enabled: !!schoolId 
     });
-
-    // Mutation for creating a report - sends form data to the server
     const mutation = useMutation({
         mutationFn: (formData) => api.post('/api/reports', formData,
             {
         headers: {
-            // disables default JSON header for file uploads in order to use multipart/form-data
             'Content-Type': 'multipart/form-data',
         },
     }
         ),
         onSuccess: (response) => {
-            queryClient.invalidateQueries(['reports']); // updates reports data after a new report is created
+            queryClient.invalidateQueries(['reports']); 
             const realCode = response.data.trackingCode;
             navigate('/confirmation', { state: { trackingCode: realCode } });
         },
@@ -52,13 +44,10 @@ function CreateReport() {
         }
     });
 
-    // form submission handler
     const handleSubmit = async (e) => {
-        e.preventDefault(); // prevents default form submission behavior
-        setErrors({}); // resets previous errors
+        e.preventDefault(); 
+        setErrors({}); 
         let newErrors = {};
-
-        // basic validation
         let missing = [];
 
     if (!selectedSubject) missing.push("נושא");
@@ -70,7 +59,6 @@ function CreateReport() {
             style: { border: '1px solid #ff4b4b', padding: '16px', fontWeight: 'bold' }
         });
         
-        // כאן נעדכן את ה-State של ה-errors כדי לצבוע את השדות
         setErrors({
             subject: !selectedSubject,
             teacher: !selectedTeacher,
@@ -79,38 +67,32 @@ function CreateReport() {
         return;
     }
 
-        // if there are validation errors, set them and stop submission
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
             return; 
         }
 
-        // creating form data to send, including files
         const formData = new FormData();
         formData.append('subject', selectedSubject);
         formData.append('location', location);
         formData.append('description', description);
         formData.append('involvedPeople', involvedPeople || '');
-        formData.append('teacherId', selectedTeacher); // שליחת ה-ID של המורה שנבחרה
-        formData.append('schoolId', schoolId); // שליחת ה-ID של בית הספר
+        formData.append('teacherId', selectedTeacher); 
+        formData.append('schoolId', schoolId); 
 
-        // appending selected files to form data
         if (selectedFiles && selectedFiles.length > 0) {
-        // Array.from הופך את ה-FileList למערך רגיל שאפשר לעבור עליו
         Array.from(selectedFiles).forEach(file => {
             formData.append('files', file);
         });
     }
 
     try {
-        await mutation.mutateAsync(formData); // triggers the mutation to submit the form data
+        await mutation.mutateAsync(formData); 
     } catch (err) {
         console.error("Submission error:", err);
     }
 };
 
-
-    // predefined subjects with icons and colors
     const subjects = [
         { id: 'self-harm', label: 'פגיעה עצמית', icon: <ShieldAlert size={24} />, colorClass: styles.redCard },
         { id: 'bullying', label: 'בריונות או חרם', icon: <Users size={24} />, colorClass: styles.yellowCard },
@@ -124,9 +106,7 @@ function CreateReport() {
         <div className={styles.container}>  
             <div className={styles.headerSection}> 
                 <h1 className={styles.mainTitle}>דיווח בטוח וסודי</h1>
-                {/* <p className={styles.infoText}>הדיווח נשאר אנונימי לחלוטין, פרטים מזהים לא ישמרו ולא יהיו חשופים למורה שיקבל את הדיווח</p> */}
                 <p className={styles.infoText}>
-                {/* האייקון נכנס לכאן */}
                 <Lock size={15} className={styles.lockIconInline} />
                 <span> הדיווח נשאר אנונימי לחלוטין, פרטים מזהים לא ישמרו ולא יהיו חשופים למורה שיקבל את הדיווח</span>
                 </p>
@@ -154,12 +134,10 @@ function CreateReport() {
                 
             </div>
 
-            {/* Subject Selection */}
             <div className={styles.subjectsGrid}>
                 {subjects.map((subject) => (
                     <div 
                         key={subject.id}
-                        // Combining the base card style, the specific color style, and the selected style
                         className={`${styles.subjectCard} ${subject.colorClass} ${selectedSubject === subject.id ? styles.selectedCard : ''}`}
                         onClick={() => setSelectedSubject(subject.id)}
                     >
@@ -226,7 +204,6 @@ function CreateReport() {
                 />
                 {errors.description && <p style={{ color: 'red', fontSize: '0.85rem' }}>{errors.description}</p>}
                 </div>
-                {/* File Upload Section */}
                 <div className={styles.fieldGroup}>
                     <label className={styles.fileLabel}>
                         הוספת הוכחות (צילומי מסך, תמונות)

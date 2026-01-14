@@ -27,14 +27,14 @@ const ExportButton = ({ data }) => {
     ws['!dir'] = 'rtl';
 
     const wscols = [
-        { wch: 15 }, // קוד דיווח
-        { wch: 10 }, // סטטוס
-        { wch: 20 }, // נושא
-        { wch: 15 }, // מיקום
-        { wch: 20 }, // תאריך
-        { wch: 50 }, // תיאור (רחב יותר)
-        { wch: 50 }, // ניתוח (רחב יותר)
-        { wch: 30 }  // קבצים
+        { wch: 15 }, 
+        { wch: 10 }, 
+        { wch: 20 }, 
+        { wch: 15 }, 
+        { wch: 20 }, 
+        { wch: 50 }, 
+        { wch: 50 }, 
+        { wch: 30 }  
     ];
     ws['!cols'] = wscols;
 

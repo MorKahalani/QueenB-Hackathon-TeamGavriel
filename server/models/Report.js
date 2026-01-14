@@ -40,7 +40,6 @@ const reportSchema = new mongoose.Schema({
     default: false
   },
 
-  // array to store file paths of uploaded evidence files
   files: [{
     type: String 
   }],
@@ -52,7 +51,7 @@ const reportSchema = new mongoose.Schema({
 
   teacherId: { 
   type: mongoose.Schema.Types.ObjectId, 
-  ref: 'User', // יוצר קשר לאוסף המשתמשים
+  ref: 'User', 
   required: true 
   },
   schoolId: { 

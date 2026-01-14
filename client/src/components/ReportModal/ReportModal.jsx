@@ -110,7 +110,6 @@ const ReportModal = ({ open, report, onClose, onUpdateStatus }) => {
       </DialogContent>
 
       <DialogActions sx={{ p: 3, justifyContent: 'space-between' }}>
-  {/* אם הדיווח בטיפול/חדש - מציגים רק 2 כפתורי ניהול */}
   {report.status !== 'ארכיון' ? (
     <Box>
       <Button 
@@ -130,7 +129,6 @@ const ReportModal = ({ open, report, onClose, onUpdateStatus }) => {
       </Button>
     </Box>
   ) : (
-    /* אם הדיווח כבר ב"טופלו" - רק כיתוב ברור */
     <Typography variant="h6" sx={{ color: 'success.main', fontWeight: 'bold' }}>
       ✓ דיווח זה טופל בהצלחה
     </Typography>

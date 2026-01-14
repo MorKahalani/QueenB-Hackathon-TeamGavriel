@@ -5,12 +5,10 @@ import { useEffect } from 'react';
 
 const Home = () => {
   const navigate = useNavigate();
-
-  // חובה להגדיר את המשתנה לפני שמשתמשים בו
   const isLoggedIn = !!localStorage.getItem('token');
   useEffect(() => {
     if (isLoggedIn) {
-      navigate('/admin'); // אם היא מחוברת, "תקפיץ" אותה ישר לניהול
+      navigate('/admin'); 
     }
   }, [isLoggedIn, navigate]);
 
