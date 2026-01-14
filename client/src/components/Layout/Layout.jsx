@@ -1,4 +1,3 @@
-
 import PropTypes from 'prop-types';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styles from '../../styles/Layout.module.css'; 
@@ -8,11 +7,8 @@ import LogoutButton from '../LogoutButton/LogoutButton';
 function Layout({ children }) {
   const location = useLocation();
   const navigate = useNavigate();
-  
-  // בדיקה אם המשתמש מחובר (האם יש טוקן?)
+ 
   const isLoggedIn = !!localStorage.getItem('token');
-  
-  // בדיקה אם אנחנו בדף הלוגין (כדי לא להראות את כפתור הכניסה בתוך דף הכניסה)
   const isLoginPage = location.pathname === '/login';
   const isReportArea = location.pathname.startsWith('/report') || 
                        location.pathname === '/confirmation';
@@ -26,10 +22,8 @@ function Layout({ children }) {
         
         <div className={styles.actionsArea}>
           {(isLoggedIn && !isReportArea)  ? (
-            /* אם המורה מחוברת - תמיד נציג כפתור יציאה */
             <LogoutButton />
           ) : (
-            /* אם היא לא מחוברת ולא נמצאת כבר בדף הלוגין - נציג כפתור כניסה */
             (!isLoginPage && !isReportArea) && (
               <button 
                 className={styles.loginHeaderBtn} 

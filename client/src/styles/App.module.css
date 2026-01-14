@@ -1,4 +1,3 @@
-/* App.module.css */
 
 .appHeader {
   background-color: #53474F;
@@ -37,12 +36,12 @@
 
 .container {
     max-width: 800px;
-    margin: 0 auto; /* ממרכז את התיבה הלבנה */
+    margin: 0 auto; 
     padding: 20px;
     direction: rtl; 
-    padding-bottom: 50px; /* רווח קטן לפני הפוטר */
+    padding-bottom: 50px; 
     width: 100%;
-    max-width: 900px; /* רוחב נוח לקריאה בטפסים */
+    max-width: 900px; 
     margin: 0 auto;
 }
 
@@ -123,18 +122,17 @@
     transition: background-color 0.3s;
 }
 
-/* מיקום הכרטיס בצד */
 .emergencyContainer {
     position: fixed;
     bottom: 20px;
-    left: 20px; /* צד שמאל */
+    left: 20px; 
     z-index: 1000;
     direction: rtl;
 }
 
 .emergencyCard {
     background-color: white;
-    border: 2px solid #d32f2f; /* מסגרת אדומה */
+    border: 2px solid #d32f2f; 
     border-radius: 12px;
     padding: 15px;
     display: flex;
@@ -157,7 +155,6 @@
     font-size: 14px;
 }
 
-/* call button styling */
 .callButton {
     background-color: #d32f2f;
     color: white !important;
@@ -176,7 +173,6 @@
     background-color: #b71c1c;
 }
 
-/*link to more info*/
 .infoLink {
     color: #666;
     font-size: 11px;
@@ -187,22 +183,19 @@
     color: #333;
 }
 
-/* grid of catagories*/
-/* Container for the row of tiles */
 .subjectsGrid {
     display: flex;
-    justify-content: space-between; /* Spreads them evenly in the row */
-    gap: 8px;                       /* 8px gap between tiles as requested */
+    justify-content: space-between; 
+    gap: 8px;                       
     margin: 25px 0;
     direction: rtl;
     width: 100%;
 }
 
-/* Individual Tile - Small and colorful */
 .subjectCard {
-    flex: 1;                        /* Makes all tiles equal width */
-    min-width: 100px;               /* Prevents them from getting too squashed */
-    height: 100px;                  /* Compact square look */
+    flex: 1;                        
+    min-width: 100px;               
+    height: 100px;                  
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -213,7 +206,6 @@
     border: 2px solid transparent;
 }
 
-/* Icon size is 24px from JSX */
 .subjectIcon {
     margin-bottom: 8px;
     display: flex;
@@ -221,7 +213,6 @@
     justify-content: center;
 }
 
-/* Text Styling - Font size 16 as requested */
 .subjectLabel {
     font-size: 16px; 
     font-weight: bold;
@@ -230,21 +221,18 @@
     color: #333;
 }
 
-/* Background Colors */
 .redCard { background-color: #ffebee; }
 .yellowCard { background-color: #fffde7; }
 .orangeCard { background-color: #fff3e0; }
 .purpleCard { background-color: #f3e5f5; }
 .grayCard { background-color: #f5f5f5; }
 
-/* Selected State */
 .selectedCard {
     border-color: #333;
     transform: translateY(-3px);
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
-/* Styling for the label and optional text */
 .fileLabel {
     display: block;
     font-weight: bold;
@@ -257,22 +245,20 @@
 .optionalText {
     font-size: 14px;
     font-weight: normal;
-    color: #888; /* Soft gray for optional text */
+    color: #888; 
 }
 
-/* Hide the ugly default browser file input */
 .hiddenFileInput {
     display: none;
 }
 
-/* Create our own nice-looking upload button */
 .fileUploadButton {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
     background-color: #f8f9fa;
-    border: 2px dashed #ccd0d5; /* Dashed border to hint it's an upload area */
+    border: 2px dashed #ccd0d5; 
     border-radius: 8px;
     padding: 12px 20px;
     cursor: pointer;
@@ -287,7 +273,7 @@
 
 .clipIcon {
     color: #555;
-    transform: rotate(45deg); /* Optional: rotates the clip to look more natural */
+    transform: rotate(45deg); 
 }
 
 .fileUploadButton span {
@@ -297,5 +283,5 @@
 
 .errorBorder {
     border: 2px solid #ff4b4b !important;
-    background-color: #fff5f5; /* גוון אדום בהיר מאוד לרקע */
+    background-color: #fff5f5; 
 }
