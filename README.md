@@ -49,7 +49,7 @@ Clone the repository:
 git clone [https://github.com/your-username/SafeSpace.git](https://github.com/your-username/SafeSpace.git)
 cd SafeSpace
 
-3. Server Setup
+### 3. Server Setup
 Navigate to the server folder: cd server
 
 Install dependencies: npm install
@@ -58,7 +58,7 @@ Create a .env file based on .env.example and add your MONGO_URI, JWT_SECRET, and
 
 Start the server: npm run dev
 
-4. Client Setup
+### 4. Client Setup
 Open a new terminal and navigate to the client folder: cd client
 
 Install dependencies: npm install
@@ -69,5 +69,5 @@ Start the frontend: npm run dev
 
 ⚠️ Note on AI Features: This project uses the OpenAI API for report analysis. If the API key is inactive, please refer to the Project Media section above to see the full AI flow in action in the demo videos.
 
-###🚀 Impact & Recognition
+## 🚀 Impact & Recognition
 Our team won 1st Place at the BeSafe Hackathon for this solution, recognized for its social impact, technical implementation, and user-centric design.
